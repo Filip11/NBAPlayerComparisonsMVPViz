@@ -1,15 +1,19 @@
 from bs4 import BeautifulSoup
 import pandas
 import urllib2
+import generatePlayerRef 
 
 seasonHrefDict = dict()
 mvpHrefDict = dict()
 basketballReferenceURL = "https://www.basketball-reference.com{params}"
+allPlayersHrefDict = dict()
 def main():
+	#Build dict with links for all NBA players
+	allPlayersHrefDict.update(generatePlayerRef.buildAllPlayersDict("https://www.basketball-reference.com/leagues/NBA_2017_per_game.html"))
 	#get Average MVPs and stats
 	averageMVPProcess()
 	#Get player stats per game
-	getPlayerStatsSeason()
+	getPlayerStatsSeason('Russell Westbrook')
 
 
 def averageMVPProcess():
@@ -102,12 +106,18 @@ def analyzeMVPStats(dataFrame):
 	#Stats we want: PPG, MPG, TS%, WIN SHARES,
 	avgPPG = (dataFrameWithStats['PPG'].sum())/len(dataFrame)
 
-
-def getPlayerStatsSeason():
-	gameStatsURL = basketballReferenceURL.format(params='/players/w/westbru01/'+'gamelog/2017')
+#Get the play href extension and pass the soupObj to getPlayerGameStatsTrad
+def getPlayerStatsSeason(playerName):
+	playerHref = allPlayersHrefDict[playerName]
+	gameStatsURL = basketballReferenceURL.format(params=playerHref[:-5]+'/gamelog/2017')
 	gameStatsHTML = urllib2.urlopen(gameStatsURL)
 	soupObj = BeautifulSoup(gameStatsHTML,"html.parser")
 
+	playerTradStatsDF = getPlayerGameStatsTrad(soupObj)
+	print(playerTradStatsDF)
+
+#Return dataframe with players game played and stats in season specified from url
+def getPlayerGameStatsTrad(soupObj):
 	#Columns
 	columnHeaders = ['Game','PTS_G']
 	colIdxs = [1,27]
@@ -118,16 +128,13 @@ def getPlayerStatsSeason():
 	gameData = []
 
 	for row in traditionalTable:
-
-		gameNumber = (row.find('td',{"data-stat":"game_season"}))
+		gameNumber = (row.find('th',{"data-stat":"ranker"}))
 		ppg = (row.find('td',{"data-stat":"pts"}))
 
 		if gameNumber is not None and ppg is not None:
 			gameData.append([gameNumber.getText(),ppg.getText()])
 	
-	#Hard coded Russell Westbrook. 
-	gameDataDataFrame = pandas.DataFrame(gameData,columns=columnHeaders)
-	gameDataDataFrame.insert(0,'Player','R. Westbrook')
-	print(gameDataDataFrame)
+	return(pandas.DataFrame(gameData,columns=columnHeaders))
+
 if __name__ == "__main__":
 	main()
