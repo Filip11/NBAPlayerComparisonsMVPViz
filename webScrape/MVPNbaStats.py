@@ -13,8 +13,8 @@ def main():
 	#get Average MVPs and stats
 	averageMVPProcess()
 	#Get player stats per game
-	getPlayerStatsSeason('Russell Westbrook')
-
+	playerTradDF = getPlayerStatsSeason('Russell Westbrook')
+	
 
 def averageMVPProcess():
 	#create soup obj on list of seasons html
@@ -114,7 +114,7 @@ def getPlayerStatsSeason(playerName):
 	soupObj = BeautifulSoup(gameStatsHTML,"html.parser")
 
 	playerTradStatsDF = getPlayerGameStatsTrad(soupObj)
-	print(playerTradStatsDF)
+	playerTradStatsDF.to_csv('Russell_Westbrook_Stats.csv')
 
 #Return dataframe with players game played and stats in season specified from url
 def getPlayerGameStatsTrad(soupObj):
@@ -124,6 +124,7 @@ def getPlayerGameStatsTrad(soupObj):
 	playerData = []
 	#Table rows data
 	traditionalTable = soupObj.find('div',id="all_pgl_basic").find('tbody').findAll("tr")
+	ptsInGame = []
 	#Use game data to build dataframe
 	gameData = []
 
@@ -132,7 +133,11 @@ def getPlayerGameStatsTrad(soupObj):
 		ppg = (row.find('td',{"data-stat":"pts"}))
 
 		if gameNumber is not None and ppg is not None:
-			gameData.append([gameNumber.getText(),ppg.getText()])
+			ptsInGame.append(float(ppg.getText()))
+			runningAvgPoints = sum(ptsInGame)/len(ptsInGame)
+
+			gameData.append([gameNumber.getText(),("%.2f" % runningAvgPoints)])
+			
 	
 	return(pandas.DataFrame(gameData,columns=columnHeaders))
 
