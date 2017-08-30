@@ -2,18 +2,20 @@ from bs4 import BeautifulSoup
 import pandas
 import urllib2
 import generatePlayerRef 
+import os
 
 seasonHrefDict = dict()
 mvpHrefDict = dict()
 basketballReferenceURL = "https://www.basketball-reference.com{params}"
 allPlayersHrefDict = dict()
+
 def main():
 	#Build dict with links for all NBA players
 	allPlayersHrefDict.update(generatePlayerRef.buildAllPlayersDict("https://www.basketball-reference.com/leagues/NBA_2017_per_game.html"))
 	#get Average MVPs and stats
 	averageMVPProcess()
 	#Get player stats per game
-	playerTradDF = getPlayerStatsSeason('Russell Westbrook')
+	playerTradDF = getPlayerStatsSeason('Russell Westbrook','2017')
 	
 
 def averageMVPProcess():
@@ -107,14 +109,17 @@ def analyzeMVPStats(dataFrame):
 	avgPPG = (dataFrameWithStats['PPG'].sum())/len(dataFrame)
 
 #Get the play href extension and pass the soupObj to getPlayerGameStatsTrad
-def getPlayerStatsSeason(playerName):
+def getPlayerStatsSeason(playerName,season):
 	playerHref = allPlayersHrefDict[playerName]
-	gameStatsURL = basketballReferenceURL.format(params=playerHref[:-5]+'/gamelog/2017')
+	gameStatsURL = basketballReferenceURL.format(params=playerHref[:-5]+'/gamelog/'+season)
 	gameStatsHTML = urllib2.urlopen(gameStatsURL)
 	soupObj = BeautifulSoup(gameStatsHTML,"html.parser")
 
 	playerTradStatsDF = getPlayerGameStatsTrad(soupObj)
-	playerTradStatsDF.to_csv('Russell_Westbrook_Stats.csv')
+	#Write stats to csv
+	parentFolder = (os.path.abspath(os.path.join(os.getcwd(), os.pardir)))
+	parentFolder = os.path.join(parentFolder,'Data Store/'+season+'/')
+	playerTradStatsDF.to_csv(parentFolder+"Russell_Westbrook_Stats_"+season+'.csv')
 
 #Return dataframe with players game played and stats in season specified from url
 def getPlayerGameStatsTrad(soupObj):
