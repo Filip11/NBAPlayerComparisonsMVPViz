@@ -9,6 +9,8 @@
 		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
 		<script src="https://d3js.org/d3.v4.min.js"></script>
 		<script src="https://d3js.org/d3-scale-chromatic.v1.min.js"></script>
+		<script src="http://code.jquery.com/ui/1.12.0-rc.2/jquery-ui.js" ></script>
+
 		<script src="js/main.js"></script>
 
 	</head>
@@ -23,9 +25,33 @@
 	</style>
 	<body>
 		<h2>NBA Player Comparisons</h2>
+		<div>
+			<input id="player-search" type="text" />
+		</div>
 		<div class="container-fluid">
 			<svg width="750" height="40"></svg>
 			<div id="comparisonGraph"></div>
 		</div>
+
+<script type="text/javascript">
+
+	function processData(dataString) {
+	  var playerArray = dataString.split(',');
+	  return playerArray;
+	}
+	var players = [];
+
+    jQuery(function($) {
+    $.get("Data Store/AllPlayers2017.csv", function(data) {
+    	players = processData(data);
+    	$("#player-search").autocomplete({
+            source: players,
+            minLength: 3
+        });
+  	});
+
+
+    });
+</script>
 	</body>
 </html>

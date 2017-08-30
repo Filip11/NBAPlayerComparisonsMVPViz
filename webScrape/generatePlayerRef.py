@@ -18,4 +18,14 @@ def buildAllPlayersDict(allPlayersURL):
 
 	parentFolder = (os.path.abspath(os.path.join(os.getcwd(), os.pardir)))
 	parentFolder = os.path.join(parentFolder,'Data Store/')
+
+	# with open(parentFolder+"AllPlayers2017.csv","wb") as outputCSV:
+
+	# 	for player in playerHrefDict:
+	# 		print(player)
+	# 		outputCSV.write(player+",")
+
 	return(playerHrefDict)
+
+if __name__ == "__main__":
+	buildAllPlayersDict("https://www.basketball-reference.com/leagues/NBA_2017_per_game.html")

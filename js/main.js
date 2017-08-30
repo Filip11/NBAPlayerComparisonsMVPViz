@@ -1,38 +1,38 @@
 $(document).ready(function() {
 	// set the dimensions and margins of the graph
-var margin = {top: 20, right: 20, bottom: 30, left: 50},
-    width = 960 - margin.left - margin.right,
-    height = 500 - margin.top - margin.bottom;
+	var margin = {top: 20, right: 20, bottom: 30, left: 50},
+	    width = 960 - margin.left - margin.right,
+	    height = 500 - margin.top - margin.bottom;
 
 
-// set the ranges
-var x = d3.scaleLinear().range([0, width]);
-var y = d3.scaleLinear().range([height, 0]);
+	// set the ranges
+	var x = d3.scaleLinear().range([0, width]);
+	var y = d3.scaleLinear().range([height, 0]);
 
-// define the line
-var valueline = d3.line()
-    .x(function(d) { return x(d.Game); })
-    .y(function(d) { return y(d.PTS_G); });
+	// define the line
+	var valueline = d3.line()
+	    .x(function(d) { return x(d.Game); })
+	    .y(function(d) { return y(d.PTS_G); });
 
-// append the svg obgect to the body of the page
-// appends a 'group' element to 'svg'
-// moves the 'group' element to the top left margin
-var svg = d3.select("#comparisonGraph").append("svg")
-    .attr("width", width + margin.left + margin.right)
-    .attr("height", height + margin.top + margin.bottom)
-  .append("g")
-    .attr("transform",
-          "translate(" + margin.left + "," + margin.top + ")");
+	// append the svg obgect to the body of the page
+	// appends a 'group' element to 'svg'
+	// moves the 'group' element to the top left margin
+	var svg = d3.select("#comparisonGraph").append("svg")
+	    .attr("width", width + margin.left + margin.right)
+	    .attr("height", height + margin.top + margin.bottom)
+	  	.append("g")
+	    .attr("transform",
+	          "translate(" + margin.left + "," + margin.top + ")");
 
-// Get the data
-d3.csv("Data Store/Russell_Westbrook_Stats.csv", function(error, data) {
-  if (error) throw error;
+	// Get the data
+	d3.csv("Data Store/Russell_Westbrook_Stats.csv", function(error, data) {
+	  if (error) throw error;
 
-  // format the data
-  data.forEach(function(d) {
-      d.Game = parseInt(d.Game);
-      d.PTS_G = parseFloat(d.PTS_G);
-  });
+	  // format the data
+	  data.forEach(function(d) {
+	      d.Game = parseInt(d.Game);
+	      d.PTS_G = parseFloat(d.PTS_G);
+	  });
 
   // Scale the range of the data
   x.domain(d3.extent(data, function(d) { return d.Game; }));
@@ -52,6 +52,7 @@ d3.csv("Data Store/Russell_Westbrook_Stats.csv", function(error, data) {
   // Add the Y Axis
   svg.append("g")
       .call(d3.axisLeft(y));
+
     svg.append("text")
       .attr("transform", "rotate(-90)")
       .attr("y", 0 - margin.left)
