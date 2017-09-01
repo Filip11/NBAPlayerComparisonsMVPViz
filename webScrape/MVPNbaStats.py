@@ -14,9 +14,19 @@ def main():
 	allPlayersHrefDict.update(generatePlayerRef.buildAllPlayersDict("https://www.basketball-reference.com/leagues/NBA_2017_per_game.html"))
 	#get Average MVPs and stats
 	averageMVPProcess()
-	#Get player stats per game
-	playerTradDF = getPlayerStatsSeason('Russell Westbrook','2017')
-	
+
+	#Player season data to be retrieved
+	playersToStudy=[['Russell Westbrook','2017'],['James Harden','2017'],['Kawhi Leonard','2017'],['LeBron James','2017'],['Isaiah Thomas','2017'],['Stephen Curry','2017'],
+	['John Wall','2017'],['Giannis Antetokounmpo','2017'],['Anthony Davis','2017'],['Kevin Durant','2017'],['DeMar DeRozan','2017'],['Stephen Curry','2016'],['Kawhi Leonard','2016'],
+	['LeBron James','2016'],['Russell Westbrook','2016'],['Kevin Durant','2016'],['Chris Paul','2016'],['Draymond Green','2016'],['Damian Lillard','2016'],['James Harden','2016'],
+	['Kyle Lowry','2016'],['Stephen Curry','2015'],['James Harden','2015'],['LeBron James','2015'],['Russell Westbrook','2015'],['Anthony Davis','2015'],['Chris Paul','2015'],
+	['LaMarcus Aldridge','2015'],['Marc Gasol','2015'],['Blake Griffin','2015'],['Tim Duncan','2015'],['Kawhi Leonard','2015'],['Klay Thompson','2015']]
+	for playerSeason in playersToStudy:
+		player=playerSeason[0]
+		season=playerSeason[1]
+		#Get player stats per game
+		playerTradDF = getPlayerStatsSeason(player,season)
+		
 
 def averageMVPProcess():
 	#create soup obj on list of seasons html
@@ -119,7 +129,8 @@ def getPlayerStatsSeason(playerName,season):
 	#Write stats to csv
 	parentFolder = (os.path.abspath(os.path.join(os.getcwd(), os.pardir)))
 	parentFolder = os.path.join(parentFolder,'Data Store/'+season+'/')
-	playerTradStatsDF.to_csv(parentFolder+"Russell_Westbrook_Stats_"+season+'.csv')
+	fileName=playerName.replace(" ", "_")
+	playerTradStatsDF.to_csv(parentFolder+fileName+"_Stats_"+season+'.csv')
 
 #Return dataframe with players game played and stats in season specified from url
 def getPlayerGameStatsTrad(soupObj):

@@ -15,7 +15,8 @@ def buildAllPlayersDict(allPlayersURL):
 			playerName =row.find('td',{"data-stat":"player"}).getText()
 			playerHref = row.findAll('a',href=True)[0]['href']
 			playerHrefDict[playerName] = playerHref
-
+	#Special case retired player
+	playerHrefDict["Tim Duncan"]="/players/d/duncati01.html"
 	parentFolder = (os.path.abspath(os.path.join(os.getcwd(), os.pardir)))
 	parentFolder = os.path.join(parentFolder,'Data Store/')
 
