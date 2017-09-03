@@ -45,16 +45,22 @@ function drawGraph(){
 	// Get the data
 	d3.csv("Data Store/"+seasonYear+'/'+playerYear+".csv", function(error, data) {
 	  if (error) throw error;
-
+	  var ppg = []
 	  // format the data
 	  data.forEach(function(d) {
 	      d.Game = parseInt(d.Game);
 	      d.PTS_G = parseFloat(d.PTS_G);
+	      ppg.push(parseFloat(d.PTS_G))
 	  });
 
 	  // Scale the range of the data
 	  x.domain(d3.extent(data, function(d) { return d.Game; }));
 	  y.domain([0, d3.max(data, function(d) { return d.PTS_G; })]);
+
+	var ppgValues = svg.selectAll(".line")
+		.data(ppg);
+
+	svg.selectAll(".line").remove()
 
 	  // Add the valueline path.
 	  svg.append("path")
@@ -62,13 +68,20 @@ function drawGraph(){
 	      .attr("class", "line")
 	      .attr("d", valueline);
 
+	svg.selectAll(".xaxis").remove()
+
 	  // Add the X Axis
 	  svg.append("g")
 	      .attr("transform", "translate(0," + height + ")")
+	       .attr("class", "xaxis")
 	      .call(d3.axisBottom(x));
+	
+
+	svg.selectAll(".yaxis").remove()
 
 	  // Add the Y Axis
 	  svg.append("g")
+	  	.attr("class", "yaxis")
 	      .call(d3.axisLeft(y));
 
 	    svg.append("text")
@@ -79,8 +92,8 @@ function drawGraph(){
 	      .style("text-anchor", "middle")
 	      .text("Values");   
 	    
-
+	
 	});
- 
+
 }
 })
