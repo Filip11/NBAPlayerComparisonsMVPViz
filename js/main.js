@@ -74,7 +74,7 @@ function drawGraph(){
 	  svg.append("g")
 	      .attr("transform", "translate(0," + height + ")")
 	       .attr("class", "xaxis")
-	      .call(d3.axisBottom(x));
+	      .call(d3.axisBottom(x).ticks(25, "s"));
 	
 
 	svg.selectAll(".yaxis").remove()
@@ -82,7 +82,7 @@ function drawGraph(){
 	  // Add the Y Axis
 	  svg.append("g")
 	  	.attr("class", "yaxis")
-	      .call(d3.axisLeft(y));
+	      .call(d3.axisLeft(y).ticks(10,"s"));
 
 	    svg.append("text")
 	      .attr("transform", "rotate(-90)")

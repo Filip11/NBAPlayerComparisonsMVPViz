@@ -25,7 +25,7 @@ def main():
 		player=playerSeason[0]
 		season=playerSeason[1]
 		#Get player stats per game
-		playerTradDF = getPlayerStatsSeason(player,season)
+		playerTradDF = getPlayerStatsSeason(player,season) #uncomment to fill out our players files
 		
 
 def averageMVPProcess():
@@ -73,6 +73,8 @@ def seasonIndexParse(soup):
 def getMVPSeasonStats(masterDataFrame):
 	#Dataframe for all mvp stats
 	mvpsStatsDataFrame = pandas.DataFrame()
+	mvpPerGameDF = pandas.DataFrame()
+
 	for i in range(len(masterDataFrame)):
 		#Get player and season from origin data frame
 		playerUnderStudy = masterDataFrame.iloc[i]['MVP']
@@ -102,6 +104,25 @@ def getMVPSeasonStats(masterDataFrame):
 		#Add the single mvp to all mvps dataframe
 		mvpsStatsDataFrame=mvpsStatsDataFrame.append(seasonStatsDataFrame,ignore_index = True)
 
+		### get players Game by Game stats, add it to a master DF we have for all mvps
+		mvpGameStatsDF = analyzeMVPStats(playerUnderStudy,playedYear)
+		mvpPerGameDF = pandas.concat([mvpGameStatsDF,mvpPerGameDF],axis=1)
+		onlyPointsPG = mvpPerGameDF[['PTS_G']].copy()
+
+	## Convert all the mvps game by game stats to float and get a new column for average of it
+	onlyPointsPG.apply(pandas.to_numeric, errors='ignore')
+	#We use the index column as Game column, start at 1
+	onlyPointsPG.index +=1
+	onlyPointsPG.index.name = "Game"
+	#Get the mean of all the stats by row
+	onlyPointsPG['mean'] = onlyPointsPG.mean(axis = 1);
+	#Write stats to csv
+	parentFolder = (os.path.abspath(os.path.join(os.getcwd(), os.pardir)))
+	parentFolder = os.path.join(parentFolder,'Data Store/MVPAverage/')
+	fileName="PPG"
+	columnsToCSV = ["mean"]
+	onlyPointsPG.to_csv(parentFolder+fileName+'.csv',columns = columnsToCSV)
+	####
 	#Concat the stats with the info mvp season data frame
 	return(pandas.concat([masterDataFrame.set_index('MVP'),mvpsStatsDataFrame.set_index('MVP')],axis=1, join = 'inner').reset_index())
 
@@ -114,9 +135,16 @@ def getYearFromSeason(season):
 	except ValueError:
 		return ""
 
-def analyzeMVPStats(dataFrame):
+def analyzeMVPStats(playerUnderStudy,playedYear):
 	#Stats we want: PPG, MPG, TS%, WIN SHARES,
-	avgPPG = (dataFrameWithStats['PPG'].sum())/len(dataFrame)
+	#statsDF = ()
+	#return (statsDF)
+	###### go to players season url and call get player game stats to get a DF of his game:pts_g pairs
+	gameStatsURL = basketballReferenceURL.format(params=mvpHrefDict[playerUnderStudy][:-5]+'/gamelog/'+playedYear)
+	gameStatsHTML = urllib2.urlopen(gameStatsURL)
+	soupObj = BeautifulSoup(gameStatsHTML,"html.parser")
+	mvpGameStatsDF= getPlayerGameStatsTrad(soupObj)
+	return mvpGameStatsDF
 
 #Get the play href extension and pass the soupObj to getPlayerGameStatsTrad
 def getPlayerStatsSeason(playerName,season):
@@ -144,17 +172,27 @@ def getPlayerGameStatsTrad(soupObj):
 	#Use game data to build dataframe
 	gameData = []
 
+	#Used to apply to DNPS
+	lastPPG = 0
+
+	#Maybe have this below in a loop that goes for each stats like [PPG, TS% ...]
 	for row in traditionalTable:
 		gameNumber = (row.find('th',{"data-stat":"ranker"}))
 		ppg = (row.find('td',{"data-stat":"pts"}))
+		dnp = (row.find('td',{"data-stat":"reason"}))
 
 		if gameNumber is not None and ppg is not None:
 			ptsInGame.append(float(ppg.getText()))
 			runningAvgPoints = sum(ptsInGame)/len(ptsInGame)
 
-			gameData.append([gameNumber.getText(),("%.2f" % runningAvgPoints)])
-			
-	
+			gameData.append([gameNumber.getText(),float("%.2f" % runningAvgPoints)])
+			#gameData.append([gameNumber.getText(),float(ppg.getText())])
+			lastPPG = runningAvgPoints
+
+		#This is for games that player didn't play in 
+		elif (dnp is not None and gameNumber is not None):
+			gameData.append([gameNumber.getText(),float(lastPPG)])
+
 	return(pandas.DataFrame(gameData,columns=columnHeaders))
 
 if __name__ == "__main__":
