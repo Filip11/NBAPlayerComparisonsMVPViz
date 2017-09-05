@@ -25,7 +25,7 @@ def main():
 		player=playerSeason[0]
 		season=playerSeason[1]
 		#Get player stats per game
-		playerTradDF = getPlayerStatsSeason(player,season) #uncomment to fill out our players files
+		#playerTradDF = getPlayerStatsSeason(player,season) #uncomment to fill out our players files
 		
 
 def averageMVPProcess():

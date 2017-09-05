@@ -15,7 +15,7 @@ $(document).ready(function() {
 	$("#player").on("change", drawGraph);
 
 	// set the dimensions and margins of the graph
-	var margin = {top: 20, right: 20, bottom: 30, left: 50},
+	var margin = {top: 20, right: 20, bottom: 50, left: 50},
 	    width = 960 - margin.left - margin.right,
 	    height = 500 - margin.top - margin.bottom;
 
@@ -28,6 +28,10 @@ $(document).ready(function() {
 	var valueline = d3.line()
 	    .x(function(d) { return x(d.Game); })
 	    .y(function(d) { return y(d.PTS_G); });
+
+	var valuelineMVP = d3.line()
+	    .x(function(d) { return x(d.Game); })
+	    .y(function(d) { return y(d.mean); });
 
 	// append the svg obgect to the body of the page
 	// appends a 'group' element to 'svg'
@@ -42,7 +46,8 @@ $(document).ready(function() {
 function drawGraph(){
 	seasonYear = ($("#season")[0].value) //This is folder name
 	playerYear = ($("#player")[0].value) //This is file name
-	// Get the data
+
+	// Get the data 
 	d3.csv("Data Store/"+seasonYear+'/'+playerYear+".csv", function(error, data) {
 	  if (error) throw error;
 	  var ppg = []
@@ -53,16 +58,37 @@ function drawGraph(){
 	      ppg.push(parseFloat(d.PTS_G))
 	  });
 
+	// Get the data 
+	d3.csv("Data Store/MVPAverage/PPG.csv", function(error, dataMVP) {
+	  if (error) throw error;
+	  // format the data
+	  dataMVP.forEach(function(d) {
+	      d.Game = parseInt(d.Game);
+	      d.mean = parseFloat(d.mean);
+	  });
 	  // Scale the range of the data
 	  x.domain(d3.extent(data, function(d) { return d.Game; }));
-	  y.domain([0, d3.max(data, function(d) { return d.PTS_G; })]);
-
-	var ppgValues = svg.selectAll(".line")
-		.data(ppg);
+	  y.domain([0, d3.max(data, function(d) {
+	   var tmpMax = d.PTS_G;
+	   if (tmpMax< 30){
+	   	return 30;
+	   }
+	   else{
+	   	return tmpMax;
+	   }
+	    }
+	   )]);
 
 	svg.selectAll(".line").remove()
+	svg.selectAll(".mvpline").remove()
 
 	  // Add the valueline path.
+	  svg.append("path")
+	      .data([dataMVP])
+	      .attr("class", "mvpline")
+	      .attr("d", valuelineMVP);
+
+	 // Add the valueline path.
 	  svg.append("path")
 	      .data([data])
 	      .attr("class", "line")
@@ -90,10 +116,17 @@ function drawGraph(){
 	      .attr("x",0 - (height / 2))
 	      .attr("dy", "1em")
 	      .style("text-anchor", "middle")
-	      .text("Values");   
-	    
+	      .text("Values");     
+
+	      // text label for the x axis
+	  svg.append("text")             
+      .attr("transform",
+            "translate(" + (width/2) + " ," + 
+                           (height + margin.top + 20) + ")")
+      .style("text-anchor", "middle")
+      .text("Game");
 	
 	});
-
+	});
 }
 })
