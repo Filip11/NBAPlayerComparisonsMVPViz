@@ -45,7 +45,7 @@ $(document).ready(function() {
 
 function drawGraph(){
 	seasonYear = ($("#season")[0].value) //This is folder name
-	playerYear = ($("#player")[0].value) //This is file name
+	playerYear = ($("#player")[0].value) //This is file 
 
 	// Get the data 
 	d3.csv("Data Store/"+seasonYear+'/'+playerYear+".csv", function(error, data) {
@@ -83,13 +83,13 @@ function drawGraph(){
 	svg.selectAll(".mvpline").remove()
 
 	  // Add the valueline path.
-	  svg.append("path")
+	  var mvpPath = svg.append("path")
 	      .data([dataMVP])
 	      .attr("class", "mvpline")
 	      .attr("d", valuelineMVP);
 
 	 // Add the valueline path.
-	  svg.append("path")
+	  var path = svg.append("path")
 	      .data([data])
 	      .attr("class", "line")
 	      .attr("d", valueline);
@@ -100,6 +100,7 @@ function drawGraph(){
 	  svg.append("g")
 	      .attr("transform", "translate(0," + height + ")")
 	       .attr("class", "xaxis")
+	       .transition().duration(500)
 	      .call(d3.axisBottom(x).ticks(25, "s"));
 	
 
@@ -108,7 +109,8 @@ function drawGraph(){
 	  // Add the Y Axis
 	  svg.append("g")
 	  	.attr("class", "yaxis")
-	      .call(d3.axisLeft(y).ticks(10,"s"));
+	  	.transition().duration(500)
+	      .call(d3.axisLeft(y).ticks(10,"s"))
 
 	    svg.append("text")
 	      .attr("transform", "rotate(-90)")
@@ -126,6 +128,26 @@ function drawGraph(){
       .style("text-anchor", "middle")
       .text("Game");
 	
+
+	   var totalLength = path.node().getTotalLength();
+	
+	//Transitions for paths on graph using length of path and duration    
+    path
+      .attr("stroke-dasharray", totalLength + " " + totalLength)
+      .attr("stroke-dashoffset", totalLength)
+      .transition()
+        .duration(4000)
+        .ease(d3.easeLinear)
+        .attr("stroke-dashoffset", 0);
+
+    mvpPath
+      .attr("stroke-dasharray", totalLength + " " + totalLength)
+      .attr("stroke-dashoffset", totalLength)
+      .transition()
+        .duration(5000)
+        .ease(d3.easeLinear)
+        .attr("stroke-dashoffset", 0);
+
 	});
 	});
 }
