@@ -13,6 +13,7 @@ $(document).ready(function() {
 
 	$("#season").on("change", drawGraph);
 	$("#player").on("change", drawGraph);
+	$("#stat").on("change", drawGraph);
 
 	// set the dimensions and margins of the graph
 	var margin = {top: 20, right: 20, bottom: 50, left: 50},
@@ -46,6 +47,7 @@ $(document).ready(function() {
 function drawGraph(){
 	seasonYear = ($("#season")[0].value) //This is folder name
 	playerYear = ($("#player")[0].value) //This is file 
+	statUnderStudy = ($("#stat")[0].value)
 
 	// Get the data 
 	d3.csv("Data Store/"+seasonYear+'/'+playerYear+".csv", function(error, data) {
@@ -130,6 +132,7 @@ function drawGraph(){
 	
 
 	   var totalLength = path.node().getTotalLength();
+	   var totalLengthMVP = mvpPath.node().getTotalLength();
 	
 	//Transitions for paths on graph using length of path and duration    
     path
@@ -141,10 +144,10 @@ function drawGraph(){
         .attr("stroke-dashoffset", 0);
 
     mvpPath
-      .attr("stroke-dasharray", totalLength + " " + totalLength)
-      .attr("stroke-dashoffset", totalLength)
+      .attr("stroke-dasharray", totalLengthMVP + " " + totalLengthMVP)
+      .attr("stroke-dashoffset", totalLengthMVP)
       .transition()
-        .duration(5000)
+        .duration(4000)
         .ease(d3.easeLinear)
         .attr("stroke-dashoffset", 0);
 
