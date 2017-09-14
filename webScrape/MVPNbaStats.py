@@ -115,29 +115,12 @@ def getMVPSeasonStats(masterDataFrame):
 		mvpGameStatsDF = analyzeMVPStats(playerUnderStudy,playedYear)
 		mvpPerGameDF = pandas.concat([mvpGameStatsDF,mvpPerGameDF],axis=1)
 
-	#This is all in for loop for each stat in column header
-	for statistic in columnHeaders:
-		####This below should be in a new function - maybe providing argument like 'AST' as parameter
-		onlyPointsPG = mvpPerGameDF[[statistic]].copy()	
-		## Convert all the mvps game by game stats to float and get a new column for average of it
-		onlyPointsPG.apply(pandas.to_numeric, errors='ignore')
-		#We use the index column as Game column, start at 1
-		onlyPointsPG.index +=1
-		onlyPointsPG.index.name = "Game"
-		#Get the mean of all the stats by row
-		onlyPointsPG['mean'] = onlyPointsPG.mean(axis = 1);  
-		
-		###### The above needs to be temporary below is permanent
-		mvpMeanFinalDF[statistic] = onlyPointsPG['mean']
+	#Set our master data frame equal to DF with mean of every stat in column headers
+	mvpMeanFinalDF = getMeanMVPStatistic(columnHeaders,mvpPerGameDF)
 
-		######
 	#Write stats to csv
-	parentFolder = (os.path.abspath(os.path.join(os.getcwd(), os.pardir)))
-	parentFolder = os.path.join(parentFolder,'Data Store/MVPAverage/')
-	fileName="MVPAvgStats"
-	columnsToCSV = ["AST_G","PTS_G"]
-	mvpMeanFinalDF.to_csv(parentFolder+fileName+'.csv',columns = columnsToCSV)
-	####
+	writeMVPAverageStatsToFile(columnHeaders,mvpMeanFinalDF)
+
 	#Concat the stats with the info mvp season data frame
 	return(pandas.concat([masterDataFrame.set_index('MVP'),mvpsStatsDataFrame.set_index('MVP')],axis=1, join = 'inner').reset_index())
 
@@ -152,14 +135,37 @@ def getYearFromSeason(season):
 
 def analyzeMVPStats(playerUnderStudy,playedYear):
 	#Stats we want: PPG, MPG, TS%, WIN SHARES,
-	#statsDF = ()
-	#return (statsDF)
 	###### go to players season url and call get player game stats to get a DF of his game:pts_g pairs
 	gameStatsURL = basketballReferenceURL.format(params=mvpHrefDict[playerUnderStudy][:-5]+'/gamelog/'+playedYear)
 	gameStatsHTML = urllib2.urlopen(gameStatsURL)
 	soupObj = BeautifulSoup(gameStatsHTML,"html.parser")
 	mvpGameStatsDF= getPlayerGameStatsTrad(soupObj)
 	return mvpGameStatsDF
+
+def getMeanMVPStatistic(statsList,gameStatsDF):
+	meanMVPDF = pandas.DataFrame()
+
+	for statistic in statsList:
+		#Get a DF with only mvp game by game stats for one stat
+		tempSingleStatDF = gameStatsDF[[statistic]].copy()	
+		## Convert all the mvps game by game stats to float and get a new column for average of it
+		tempSingleStatDF.apply(pandas.to_numeric, errors='ignore')
+		#We use the index column as Game column, start at 1
+		tempSingleStatDF.index +=1
+		tempSingleStatDF.index.name = "Game"
+		#Get the mean of all the stats by row
+		tempSingleStatDF['mean'] = tempSingleStatDF.mean(axis = 1);  
+		
+		###### The above needs to be temporary below is permanent
+		meanMVPDF[statistic] = tempSingleStatDF['mean']
+	return meanMVPDF
+
+def writeMVPAverageStatsToFile(columnHeaders,avgDF):
+	#Write stats to csv
+	parentFolder = (os.path.abspath(os.path.join(os.getcwd(), os.pardir)))
+	parentFolder = os.path.join(parentFolder,'Data Store/MVPAverage/')
+	fileName="MVPAvgStats"
+	avgDF.to_csv(parentFolder+fileName+'.csv',columns = columnHeaders)
 
 #Get the play href extension and pass the soupObj to getPlayerGameStatsTrad
 def getPlayerStatsSeason(playerName,season):
