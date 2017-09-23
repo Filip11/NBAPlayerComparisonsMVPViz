@@ -25,7 +25,7 @@ def main():
 		player=playerSeason[0]
 		season=playerSeason[1]
 		#Get player stats per game
-		#playerTradDF = getPlayerStatsSeason(player,season) #uncomment to fill out our players files
+		playerTradDF = getPlayerStatsSeason(player,season) #uncomment to fill out our players files
 		
 
 def averageMVPProcess():
@@ -49,7 +49,7 @@ def seasonIndexParse(soup):
 		columnHeaders.append(soup.findAll('tr',limit=2)[1].findAll('th')[column].getText())
 	
 	#set data from table - we're going back to 86-87 season - 3:33
-	dataRows = soup.findAll('tr')[3:6]
+	dataRows = soup.findAll('tr')[3:33]
 	#For each table row, extract the text from the data element
 	for row in dataRows:
 		seasonsTag = row.findAll('a',href=True)[0]
@@ -196,6 +196,7 @@ def getPlayerGameStatsTrad(soupObj):
 
 	#Used to apply to DNPS
 	lastPPG = 0
+	lastAPG = 0
 
 	#Maybe have this below in a loop that goes for each stats like [PPG, TS% ...]
 	for row in traditionalTable:
@@ -213,10 +214,11 @@ def getPlayerGameStatsTrad(soupObj):
 			gameData.append([gameNumber.getText(),float("%.2f" % runningAvgPoints),float("%.2f" % runningAvgAssists)])
 			#gameData.append([gameNumber.getText(),float(ppg.getText())])
 			lastPPG = runningAvgPoints
+			lastAPG = runningAvgAssists
 
 		#This is for games that player didn't play in 
 		elif (dnp is not None and gameNumber is not None):
-			gameData.append([gameNumber.getText(),float(lastPPG),float(runningAvgAssists)])
+			gameData.append([gameNumber.getText(),float(lastPPG),float(lastAPG)])
 
 	return(pandas.DataFrame(gameData,columns=columnHeaders))
 

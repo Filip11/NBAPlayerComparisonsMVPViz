@@ -28,7 +28,7 @@ $(document).ready(function() {
 	// define the line
 	var valueline = d3.line()
 	    .x(function(d) { return x(d.Game); })
-	    .y(function(d) { return y(d.PTS_G); });
+	    .y(function(d) { return y(d.Stat_G); });
 
 	var valuelineMVP = d3.line()
 	    .x(function(d) { return x(d.Game); })
@@ -52,34 +52,32 @@ function drawGraph(){
 	// Get the data 
 	d3.csv("Data Store/"+seasonYear+'/'+playerYear+".csv", function(error, data) {
 	  if (error) throw error;
-	  var ppg = []
 	  // format the data
 	  data.forEach(function(d) {
 	      d.Game = parseInt(d.Game);
-	      d.PTS_G = parseFloat(d.PTS_G);
-	      ppg.push(parseFloat(d.PTS_G))
+	      d.Stat_G = parseFloat(d[statUnderStudy]);
 	  });
 
 	// Get the data 
-	d3.csv("Data Store/MVPAverage/PPG.csv", function(error, dataMVP) {
+	d3.csv("Data Store/MVPAverage/MVPAvgStats.csv", function(error, dataMVP) {
 	  if (error) throw error;
 	  // format the data
 	  dataMVP.forEach(function(d) {
 	      d.Game = parseInt(d.Game);
-	      d.mean = parseFloat(d.mean);
+	      d.mean = parseFloat(d[statUnderStudy]); //Square brackets allow the passing of variables
 	  });
 	  // Scale the range of the data
 	  x.domain(d3.extent(data, function(d) { return d.Game; }));
-	  y.domain([0, d3.max(data, function(d) {
-	   var tmpMax = d.PTS_G;
-	   if (tmpMax< 30){
-	   	return 30;
-	   }
-	   else{
-	   	return tmpMax;
-	   }
-	    }
-	   )]);
+
+	  var playerMaxValue = d3.max(data, function(d){
+	  	return d.Stat_G
+	  })
+	  var mvpMaxValue = d3.max(dataMVP, function(d){
+	  	return d.mean
+	  })
+	  var maxPoints = [playerMaxValue,mvpMaxValue]
+
+ 	  y.domain([0, Math.max.apply(Math,maxPoints)]) 
 
 	svg.selectAll(".line").remove()
 	svg.selectAll(".mvpline").remove()
