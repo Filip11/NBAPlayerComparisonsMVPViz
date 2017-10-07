@@ -86,7 +86,7 @@ def getMVPSeasonStats(masterDataFrame):
 		mvpURLHTML = urllib2.urlopen(mvpURL)
 		soupObj = BeautifulSoup(mvpURLHTML,"html.parser")
 
-		columnHeaders = ["AST_G","PTS_G"]
+		columnHeaders = ["FG_PCT","AST_G","PTS_G"]
 		playerData = []
 
 		#Get the year, ex 2017 for 2016-17
@@ -96,21 +96,26 @@ def getMVPSeasonStats(masterDataFrame):
 		tablePerGame = soupObj.find('div',id="all_per_game").find('tr',id='per_game.'+playedYear)
 		seasonStats = (tablePerGame.findAll('td'))
 		tmpSeasonStats = []
+
+		#Stats that will be used for both MVP stats and Player stats (are linked)
+		mvpStatsDesired = ["fg_pct","ast_per_g","pts_per_g"]
+
+		#Loop through stats of MVPSTATSDESIRED to build MVP data frame
 		for td in seasonStats:
-			if (td['data-stat'] == "ast_per_g"):
-				tmpSeasonStats.append(td.getText())
-			if(td['data-stat'] == "pts_per_g"):
-				tmpSeasonStats.append(td.getText())
-			if len(tmpSeasonStats) == 2:
-				playerData.append(tmpSeasonStats)
-				tmpSeasonStats=[]
+			for statOfInterest in mvpStatsDesired:
+				if(td['data-stat'] == statOfInterest):
+					tmpSeasonStats.append(td.getText())
+
+				if len(tmpSeasonStats) == len(mvpStatsDesired):
+					playerData.append(tmpSeasonStats)
+					tmpSeasonStats = []
+
 		#Temp Dataframe for single mvps stats single season
 		seasonStatsDataFrame = pandas.DataFrame(playerData,columns=columnHeaders)
 		#Add column for players name
 		seasonStatsDataFrame.insert(0,'MVP',playerUnderStudy)
 		#Add the single mvp to all mvps dataframe
 		mvpsStatsDataFrame=mvpsStatsDataFrame.append(seasonStatsDataFrame,ignore_index = True)
-
 		### get players Game by Game stats, add it to a master DF we have for all mvps
 		mvpGameStatsDF = analyzeMVPStats(playerUnderStudy,playedYear)
 		mvpPerGameDF = pandas.concat([mvpGameStatsDF,mvpPerGameDF],axis=1)
@@ -144,7 +149,6 @@ def analyzeMVPStats(playerUnderStudy,playedYear):
 
 def getMeanMVPStatistic(statsList,gameStatsDF):
 	meanMVPDF = pandas.DataFrame()
-
 	for statistic in statsList:
 		#Get a DF with only mvp game by game stats for one stat
 		tempSingleStatDF = gameStatsDF[[statistic]].copy()	
@@ -173,7 +177,6 @@ def getPlayerStatsSeason(playerName,season):
 	gameStatsURL = basketballReferenceURL.format(params=playerHref[:-5]+'/gamelog/'+season)
 	gameStatsHTML = urllib2.urlopen(gameStatsURL)
 	soupObj = BeautifulSoup(gameStatsHTML,"html.parser")
-
 	playerTradStatsDF = getPlayerGameStatsTrad(soupObj)
 	#Write stats to csv
 	parentFolder = (os.path.abspath(os.path.join(os.getcwd(), os.pardir)))
@@ -183,42 +186,69 @@ def getPlayerStatsSeason(playerName,season):
 
 #Return dataframe with players game played and stats in season specified from url
 def getPlayerGameStatsTrad(soupObj):
-	#Columns
-	columnHeaders = ['Game','PTS_G','AST_G']
+	#Columns - THIS ARRAY NEEDS TO MATCH UP WITH MASTER DF COLUMN HEADERS WHEN ADDING DATA
+	columnHeaders = ['Game','FG_PCT','AST_G','PTS_G']
 	colIdxs = [1,27]
 	playerData = []
 	#Table rows data
 	traditionalTable = soupObj.find('div',id="all_pgl_basic").find('tbody').findAll("tr")
-	ptsInGame = []
-	astInGame = []
+
+	#An array of a stat for a player in that season used to calc running average
+	statItemInGame = []
+	
 	#Use game data to build dataframe
+	tmpGameData = []
 	gameData = []
 
-	#Used to apply to DNPS
-	lastPPG = 0
-	lastAPG = 0
-
-	#Maybe have this below in a loop that goes for each stats like [PPG, TS% ...]
+	#Loop through desired stats for a player in season
+	statsOfInterest = ["fg_pct","ast","pts"]
+	#Dict used to store single stats for a player in a season
+	#key: statOfInterest Val: List of stats game by game
+	runningStatAvgDict = dict()
+	
 	for row in traditionalTable:
 		gameNumber = (row.find('th',{"data-stat":"ranker"}))
-		ppg = (row.find('td',{"data-stat":"pts"}))
-		ast = row.find('td',{"data-stat":"ast"})
 		dnp = (row.find('td',{"data-stat":"reason"}))
-		if gameNumber is not None and ppg is not None:
-			ptsInGame.append(float(ppg.getText()))
-			runningAvgPoints = sum(ptsInGame)/len(ptsInGame)
 
-			astInGame.append(float(ast.getText()))
-			runningAvgAssists = sum(astInGame)/len(astInGame)
+		#For each stat in statsOfInterest
+		for statUnderStudy in statsOfInterest:
+			statItem = row.find('td',{"data-stat":statUnderStudy})
 
-			gameData.append([gameNumber.getText(),float("%.2f" % runningAvgPoints),float("%.2f" % runningAvgAssists)])
-			#gameData.append([gameNumber.getText(),float(ppg.getText())])
-			lastPPG = runningAvgPoints
-			lastAPG = runningAvgAssists
+			if gameNumber is not None: 
 
-		#This is for games that player didn't play in 
-		elif (dnp is not None and gameNumber is not None):
-			gameData.append([gameNumber.getText(),float(lastPPG),float(lastAPG)])
+				if statItem is not None:
+					#For first played game of season start dict
+					if statUnderStudy not in runningStatAvgDict:
+						#If the table has an empty cell for this stat - just set the value to 0.
+						if statItem.getText() == '':
+							runningStatAvgDict[statUnderStudy]= [0]
+						else:
+							runningStatAvgDict[statUnderStudy]= [float(statItem.getText())]
+					#Append game values to dictionary
+					else:
+						if statItem.getText() == '':
+							runningStatAvgDict[statUnderStudy].append(0)
+						else:
+							runningStatAvgDict[statUnderStudy].append(float(statItem.getText()))
+
+					#Calculate running average by getting the list of stat values for a statUnder study and getting the mean of it
+					statItemInGame = runningStatAvgDict[statUnderStudy]
+					runningAvgStat = sum(statItemInGame)/len(statItemInGame)
+					tmpGameData.append(float(runningAvgStat))
+
+				#For DNPs, append the running average so far
+				elif dnp is not None:
+					if statUnderStudy in runningStatAvgDict:
+						tmpGameData.append(sum(runningStatAvgDict[statUnderStudy])/len(runningStatAvgDict[statUnderStudy]))
+					#If they have no stats yet its just 0
+					else:
+						tmpGameData.append(0) 
+
+				#When theres a stat value for each game, append to game data and reset tmpGameData
+				if len(tmpGameData) == len(statsOfInterest):
+					tmpGameData.insert(0, gameNumber.getText())	
+					gameData.append(tmpGameData)
+					tmpGameData = []
 
 	return(pandas.DataFrame(gameData,columns=columnHeaders))
 
