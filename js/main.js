@@ -10,7 +10,8 @@ $(document).ready(function() {
             $("#player").html("<option value='Stephen_Curry_Stats_2015'>Stephen Curry</option><option value='James_Harden_Stats_2015'>James Harden</option><option value='LeBron_James_Stats_2015'>LeBron James</option><option value='Russell_Westbrook_Stats_2015'>Russell Westbrook</option><option value='Anthony_Davis_Stats_2015'>Anthony Davis</option><option value='Chris_Paul_Stats_2015'>Chris Paul</option><option value='LaMarcus_Aldridge_Stats_2015'>LaMarcus Aldridge</option><option value='Marc_Gasol_Stats_2015'>Marc Gasol</option><option value='Blake_Griffin_Stats_2015'>Blake Griffin</option><option value='Tim_Duncan_Stats_2015'>Tim Duncan</option><option value='Kawhi_Leonard_Stats_2015'>Kawhi Leonard</option><option value='Klay_Thompson_Stats_2015'>Klay Thompson</option>");
         }
     });
-
+	
+	/* Change graph on drop down selection */
 	$("#season").on("change", drawGraph);
 	$("#player").on("change", drawGraph);
 	$("#stat").on("change", drawGraph);
@@ -25,11 +26,12 @@ $(document).ready(function() {
 	var x = d3.scaleLinear().range([0, width]);
 	var y = d3.scaleLinear().range([height, 0]);
 
-	// define the line
+	// define the player line
 	var valueline = d3.line()
 	    .x(function(d) { return x(d.Game); })
 	    .y(function(d) { return y(d.Stat_G); });
 
+	//define the MVP average line
 	var valuelineMVP = d3.line()
 	    .x(function(d) { return x(d.Game); })
 	    .y(function(d) { return y(d.mean); });
@@ -44,112 +46,117 @@ $(document).ready(function() {
 	    .attr("transform",
 	          "translate(" + margin.left + "," + margin.top + ")");
 
-function drawGraph(){
-	seasonYear = ($("#season")[0].value) //This is folder name
-	playerYear = ($("#player")[0].value) //This is file 
-	statUnderStudy = ($("#stat")[0].value)
+	function drawGraph(){
+		seasonYear = ($("#season")[0].value) //This is folder name
+		playerYear = ($("#player")[0].value) //This is file 
+		statUnderStudy = ($("#stat")[0].value) //Column in file
 
-	// Get the data 
-	d3.csv("Data Store/"+seasonYear+'/'+playerYear+".csv", function(error, data) {
-	  if (error) throw error;
-	  // format the data
-	  data.forEach(function(d) {
-	      d.Game = parseInt(d.Game);
-	      d.Stat_G = parseFloat(d[statUnderStudy]);
-	  });
+		// Get the data 
+		d3.csv("Data Store/"+seasonYear+'/'+playerYear+".csv", function(error, data) {
+				if (error) throw error;
+			  	// format the PLAYER data
+			  	data.forEach(function(d) {
+			    	d.Game = parseInt(d.Game);
+			      	d.Stat_G = parseFloat(d[statUnderStudy]);
+			  	});
 
-	// Get the data 
-	d3.csv("Data Store/MVPAverage/MVPAvgStats.csv", function(error, dataMVP) {
-	  if (error) throw error;
-	  // format the data
-	  dataMVP.forEach(function(d) {
-	      d.Game = parseInt(d.Game);
-	      d.mean = parseFloat(d[statUnderStudy]); //Square brackets allow the passing of variables
-	  });
-	  // Scale the range of the data
-	  x.domain(d3.extent(data, function(d) { return d.Game; }));
+			// Get the MVP data 
+			d3.csv("Data Store/MVPAverage/MVPAvgStats.csv", function(error, dataMVP) {
+					if (error) throw error;
+				  	// format the MVP data
+				  	dataMVP.forEach(function(d) {
+				    	d.Game = parseInt(d.Game);
+				      	d.mean = parseFloat(d[statUnderStudy]); //Square brackets allow the passing of variables
+				  	});
 
-	  var playerMaxValue = d3.max(data, function(d){
-	  	return d.Stat_G
-	  })
-	  var mvpMaxValue = d3.max(dataMVP, function(d){
-	  	return d.mean
-	  })
-	  var maxPoints = [playerMaxValue,mvpMaxValue]
+				// Scale the domain of the data
+				x.domain(d3.extent(data, function(d) { return d.Game; }));
 
- 	  y.domain([0, Math.max.apply(Math,maxPoints)]) 
+				//Scale the range of data using max value of PLAYER and MVP data
+				var playerMaxValue = d3.max(data, function(d){
+				  	return d.Stat_G
+				})
+				var mvpMaxValue = d3.max(dataMVP, function(d){
+					return d.mean
+				})
+				var maxPoints = [playerMaxValue,mvpMaxValue]
 
-	svg.selectAll(".line").remove()
-	svg.selectAll(".mvpline").remove()
+			 	y.domain([0, Math.max.apply(Math,maxPoints)])
 
-	  // Add the valueline path.
-	  var mvpPath = svg.append("path")
-	      .data([dataMVP])
-	      .attr("class", "mvpline")
-	      .attr("d", valuelineMVP);
+			 	//Drawing 
 
-	 // Add the valueline path.
-	  var path = svg.append("path")
-	      .data([data])
-	      .attr("class", "line")
-	      .attr("d", valueline);
+				svg.selectAll(".line").remove()
+				svg.selectAll(".mvpline").remove()
 
-	svg.selectAll(".xaxis").remove()
+				// Add the valueline path MVP.
+				var mvpPath = svg.append("path")
+					.data([dataMVP])
+				    .attr("class", "mvpline")
+				    .attr("d", valuelineMVP);
 
-	  // Add the X Axis
-	  svg.append("g")
-	      .attr("transform", "translate(0," + height + ")")
-	       .attr("class", "xaxis")
-	       .transition().duration(500)
-	      .call(d3.axisBottom(x).ticks(25, "s"));
-	
+				// Add the valueline path PLAYER.
+				var path = svg.append("path")
+				    .data([data])
+				    .attr("class", "line")
+				    .attr("d", valueline);
 
-	svg.selectAll(".yaxis").remove()
+				svg.selectAll(".xaxis").remove()
 
-	  // Add the Y Axis
-	  svg.append("g")
-	  	.attr("class", "yaxis")
-	  	.transition().duration(500)
-	      .call(d3.axisLeft(y).ticks(10,"s"))
+				// Add the X Axis
+				svg.append("g")
+				    .attr("transform", "translate(0," + height + ")")
+				    .attr("class", "xaxis")
+				    .transition().duration(500)
+				    .call(d3.axisBottom(x).ticks(25, "s"));
+				
 
-	    svg.append("text")
-	      .attr("transform", "rotate(-90)")
-	      .attr("y", 0 - margin.left)
-	      .attr("x",0 - (height / 2))
-	      .attr("dy", "1em")
-	      .style("text-anchor", "middle")
-	      .text("Values");     
+				svg.selectAll(".yaxis").remove()
 
-	      // text label for the x axis
-	  svg.append("text")             
-      .attr("transform",
-            "translate(" + (width/2) + " ," + 
-                           (height + margin.top + 20) + ")")
-      .style("text-anchor", "middle")
-      .text("Game");
-	
+				// Add the Y Axis
+				svg.append("g")
+				  	.attr("class", "yaxis")
+				  	.transition().duration(500)
+				    .call(d3.axisLeft(y).ticks(10,"s"))
 
-	   var totalLength = path.node().getTotalLength();
-	   var totalLengthMVP = mvpPath.node().getTotalLength();
-	
-	//Transitions for paths on graph using length of path and duration    
-    path
-      .attr("stroke-dasharray", totalLength + " " + totalLength)
-      .attr("stroke-dashoffset", totalLength)
-      .transition()
-        .duration(4000)
-        .ease(d3.easeLinear)
-        .attr("stroke-dashoffset", 0);
+				//Add Text for Y axis
+				svg.append("text")
+				    .attr("transform", "rotate(-90)")
+				    .attr("y", 0 - margin.left)
+				    .attr("x",0 - (height / 2))
+				    .attr("dy", "1em")
+				    .style("text-anchor", "middle")
+				    .text("Values");     
 
-    mvpPath
-      .attr("stroke-dasharray", totalLengthMVP + " " + totalLengthMVP)
-      .attr("stroke-dashoffset", totalLengthMVP)
-      .transition()
-        .duration(4000)
-        .ease(d3.easeLinear)
-        .attr("stroke-dashoffset", 0);
+				// text label for the x axis
+				svg.append("text")             
+			      	.attr("transform",
+			        	"translate(" + (width/2) + " ," + 
+			                (height + margin.top + 20) + ")")
+			      	.style("text-anchor", "middle")
+			      	.text("Game");
+				
+			    //Get Path lengths for line transition
+				var totalLength = path.node().getTotalLength();
+				var totalLengthMVP = mvpPath.node().getTotalLength();
+				
+				//Transitions for paths on graph using length of path and duration    
+			    path
+			      	.attr("stroke-dasharray", totalLength + " " + totalLength)
+			      	.attr("stroke-dashoffset", totalLength)
+			      	.transition()
+			        .duration(4000)
+			        .ease(d3.easeLinear)
+			        .attr("stroke-dashoffset", 0);
 
-	});
-	});
-}
+			    mvpPath
+			      	.attr("stroke-dasharray", totalLengthMVP + " " + totalLengthMVP)
+			      	.attr("stroke-dashoffset", totalLengthMVP)
+			      	.transition()
+			        .duration(4000)
+			        .ease(d3.easeLinear)
+			        .attr("stroke-dashoffset", 0);
+
+			});
+		});
+	}
 })
