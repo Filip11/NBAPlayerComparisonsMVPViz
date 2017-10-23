@@ -86,7 +86,7 @@ def getMVPSeasonStats(masterDataFrame):
 		mvpURLHTML = urllib2.urlopen(mvpURL)
 		soupObj = BeautifulSoup(mvpURLHTML,"html.parser")
 
-		columnHeaders = ["FG_PCT","AST_G","PTS_G"]
+		columnHeaders = ["FG_G","FGA_G","FG_PCT","RBD_G","AST_G","PTS_G"]
 		playerData = []
 
 		#Get the year, ex 2017 for 2016-17
@@ -98,7 +98,7 @@ def getMVPSeasonStats(masterDataFrame):
 		tmpSeasonStats = []
 
 		#Stats that will be used for both MVP stats and Player stats (are linked)
-		mvpStatsDesired = ["fg_pct","ast_per_g","pts_per_g"]
+		mvpStatsDesired = ["fg_per_g","fga_per_g","fg_pct","trb_per_g","ast_per_g","pts_per_g"]
 
 		#Loop through stats of MVPSTATSDESIRED to build MVP data frame
 		for td in seasonStats:
@@ -187,7 +187,7 @@ def getPlayerStatsSeason(playerName,season):
 #Return dataframe with players game played and stats in season specified from url
 def getPlayerGameStatsTrad(soupObj):
 	#Columns - THIS ARRAY NEEDS TO MATCH UP WITH MASTER DF COLUMN HEADERS WHEN ADDING DATA
-	columnHeaders = ['Game','FG_PCT','AST_G','PTS_G']
+	columnHeaders = ['Game','FG_G',"FGA_G","FG_PCT","RBD_G",'AST_G','PTS_G']
 	colIdxs = [1,27]
 	playerData = []
 	#Table rows data
@@ -201,7 +201,7 @@ def getPlayerGameStatsTrad(soupObj):
 	gameData = []
 
 	#Loop through desired stats for a player in season
-	statsOfInterest = ["fg_pct","ast","pts"]
+	statsOfInterest = ["fg","fga","trb","ast","pts"]
 	#Dict used to store single stats for a player in a season
 	#key: statOfInterest Val: List of stats game by game
 	runningStatAvgDict = dict()
@@ -217,6 +217,7 @@ def getPlayerGameStatsTrad(soupObj):
 			if gameNumber is not None: 
 
 				if statItem is not None:
+
 					#For first played game of season start dict
 					if statUnderStudy not in runningStatAvgDict:
 						#If the table has an empty cell for this stat - just set the value to 0.
@@ -246,7 +247,13 @@ def getPlayerGameStatsTrad(soupObj):
 
 				#When theres a stat value for each game, append to game data and reset tmpGameData
 				if len(tmpGameData) == len(statsOfInterest):
-					tmpGameData.insert(0, gameNumber.getText())	
+					tmpGameData.insert(0, gameNumber.getText())
+					#FG% calculation and avoid divide by 0
+					if tmpGameData[2] != 0:
+						tmpGameData.insert(3,float(tmpGameData[1])/float(tmpGameData[2]))	
+					else:
+						tmpGameData.insert(3,0)
+
 					gameData.append(tmpGameData)
 					tmpGameData = []
 
