@@ -10,6 +10,7 @@ $(document).ready(function() {
             $("#player").html("<option value='Stephen_Curry_Stats_2015'>Stephen Curry</option><option value='James_Harden_Stats_2015'>James Harden</option><option value='LeBron_James_Stats_2015'>LeBron James</option><option value='Russell_Westbrook_Stats_2015'>Russell Westbrook</option><option value='Anthony_Davis_Stats_2015'>Anthony Davis</option><option value='Chris_Paul_Stats_2015'>Chris Paul</option><option value='LaMarcus_Aldridge_Stats_2015'>LaMarcus Aldridge</option><option value='Marc_Gasol_Stats_2015'>Marc Gasol</option><option value='Blake_Griffin_Stats_2015'>Blake Griffin</option><option value='Tim_Duncan_Stats_2015'>Tim Duncan</option><option value='Kawhi_Leonard_Stats_2015'>Kawhi Leonard</option><option value='Klay_Thompson_Stats_2015'>Klay Thompson</option>");
         }
     });
+	drawGraph();
 	
 	/* Change graph on drop down selection */
 	$("#season").on("change", drawGraph);
@@ -17,7 +18,7 @@ $(document).ready(function() {
 	$("#stat").on("change", drawGraph);
 
 	// set the dimensions and margins of the graph
-	var margin = {top: 20, right: 70, bottom: 50, left: 50},
+	var margin = {top: 20, right: 200, bottom: 50, left: 50},
 	    width = 960 - margin.left - margin.right,
 	    height = 500 - margin.top - margin.bottom;
 
@@ -114,26 +115,43 @@ $(document).ready(function() {
 						.tickSize(-width)
 						.tickFormat("")
 				)
+
 				//Add Legend	
-				var legend = svg.selectAll('g')
+				svg.selectAll(".legend").remove();
+					
+				var legend = svg.selectAll('.legend')
 					.data(playerYear)
 					.enter()
 					.append('g')
 					.attr('class', 'legend');
 
 				legend.append('rect')
-					.attr('x', width - 100)
-					.attr('y', height - 80)
-					.attr('width', 10)
-					.attr('height', 10)
+					.attr('x', width + 10)
+					.attr('y', height - 400)
+					.attr('width', 8)
+					.attr('height', 8)
 					.style('fill', "blue");
 
+				legend.append('rect')
+					.attr('x', width + 10)
+					.attr('y', height - 370)
+					.attr('width', 8)
+					.attr('height', 8)
+					.style('fill', "#FFD700");
+
 				legend.append('text')
-					.attr('x', width - 112)
-					.attr('y', height - 80)
+					.attr('x', width + 25)
+					.attr('y', height - 392)
 					.style("font-size", "15px")
-					.style("font-weight", height + 9)
+					.style("font-weight",200)
 					.text($("#player option:selected").text())
+
+				legend.append('text')
+					.attr('x', width + 25)
+					.attr('y', height - 362)
+					.style("font-size", "15px")
+					.style("font-weight",200)
+					.text("30 Previous MVP's Average")
 			 	
 			 	//Drawing 
 				svg.selectAll(".line").remove()
@@ -190,22 +208,25 @@ $(document).ready(function() {
 			    var mouseG = svg.append("g")
       				.attr("class", "mouse-over-effects");
 
+      			var linesOnGraph = d3.selectAll(".line, .mvpline")
+      			console.log(linesOnGraph)
+			
+
       			mouseG.append("path") // this is the black vertical line to follow mouse
 					.attr("class", "mouse-line")
 					.style("stroke", "black")
 					.style("stroke-width", "1px")
 					.style("opacity", "0");
 
-
 			    var mousePerLine = mouseG.selectAll('.mouse-per-line')
-					.data(playerYear)
+					.data([data])
 					.enter()
 					.append("g")
 					.attr("class", "mouse-per-line");
 
 			    mousePerLine.append("circle")
-					.attr("r", 7)
-					.style("stroke", "red")
+					.attr("r", 4)
+					.style("stroke", "black")
 					.style("fill", "none")
 					.style("stroke-width", "1px")
 					.style("opacity", "0");
@@ -232,7 +253,7 @@ $(document).ready(function() {
 					    d3.selectAll(".mouse-per-line circle")
           					.style("opacity", "1");
         				d3.selectAll(".mouse-per-line text")
-          					.style("opacity", "1");
+          					.style("opacity", "0.9");
 					})
 					.on('mousemove', function() { // mouse moving over canvas
 				        var mouse = d3.mouse(this);
@@ -246,19 +267,20 @@ $(document).ready(function() {
 				        // position the circle and text
 				    	d3.selectAll(".mouse-per-line")
           					.attr("transform", function(d, i) {
-          						
+          					
+
 				            var xGame = x.invert(mouse[0]),
 				                bisect = d3.bisector(function(d) {
 				                	return d.Game; }).right;
 				                //idx = bisect(10, xGame);
-            					
 					            var beginning = 0,
 					                end = path.node().getTotalLength(),
+					                //end = linesOnGraph._groups[0][i].pathLength,
 					                target = null;
-
 					            while (true){
 									target = Math.floor((beginning + end) / 2);
 									pos = path.node().getPointAtLength(target);
+									//pos = linesOnGraph._groups[0][i].node().getPointAtLength(target);
 									if ((target === end || target === beginning) && pos.x !== mouse[0]) {
 										break;
 									}
