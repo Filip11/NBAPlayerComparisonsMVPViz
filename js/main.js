@@ -81,6 +81,12 @@ $(document).ready(function() {
 				    	d.Game = parseInt(d.Game);
 				      	d.mean = parseFloat(d[statUnderStudy]); //Square brackets allow the passing of variables
 				  	});
+				
+				// EXPERIMENT
+				data.push(dataMVP);
+				console.log(data.length)
+				data = [].concat.apply([],data);
+				console.log(data)
 
 				// Scale the domain of the data
 				x.domain(d3.extent(data, function(d) { return d.Game; }));
@@ -92,7 +98,7 @@ $(document).ready(function() {
 				var mvpMaxValue = d3.max(dataMVP, function(d){
 					return d.mean
 				})
-				var maxPoints = [playerMaxValue,mvpMaxValue]
+				var maxPoints = [playerMaxValue+(0.1*playerMaxValue),mvpMaxValue+(0.1*mvpMaxValue)]
 
 			 	y.domain([0, Math.max.apply(Math,maxPoints)])
 
@@ -219,7 +225,7 @@ $(document).ready(function() {
 					.style("opacity", "0");
 
 			    var mousePerLine = mouseG.selectAll('.mouse-per-line')
-					.data([data])
+					.data([data,dataMVP])
 					.enter()
 					.append("g")
 					.attr("class", "mouse-per-line");
@@ -267,7 +273,6 @@ $(document).ready(function() {
 				        // position the circle and text
 				    	d3.selectAll(".mouse-per-line")
           					.attr("transform", function(d, i) {
-          					
 
 				            var xGame = x.invert(mouse[0]),
 				                bisect = d3.bisector(function(d) {
@@ -307,7 +312,7 @@ $(document).ready(function() {
 			      	.attr("stroke-dasharray", totalLength + " " + totalLength)
 			      	.attr("stroke-dashoffset", totalLength)
 			      	.transition()
-			        .duration(4000)
+			        .duration(3500)
 			        .ease(d3.easeLinear)
 			        .attr("stroke-dashoffset", 0);
 
@@ -315,7 +320,7 @@ $(document).ready(function() {
 			      	.attr("stroke-dasharray", totalLengthMVP + " " + totalLengthMVP)
 			      	.attr("stroke-dashoffset", totalLengthMVP)
 			      	.transition()
-			        .duration(4000)
+			        .duration(3500)
 			        .ease(d3.easeLinear)
 			        .attr("stroke-dashoffset", 0);
 
