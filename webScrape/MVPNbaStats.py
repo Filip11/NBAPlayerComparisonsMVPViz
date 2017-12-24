@@ -3,6 +3,7 @@ import pandas
 import urllib2
 import generatePlayerRef 
 import os
+import advStatCalc
 
 seasonHrefDict = dict()
 mvpHrefDict = dict()
@@ -25,7 +26,7 @@ def main():
 		player=playerSeason[0]
 		season=playerSeason[1]
 		#Get player stats per game
-		playerTradDF = getPlayerStatsSeason(player,season) #uncomment to fill out our players files
+		#playerTradDF = getPlayerStatsSeason(player,season) #uncomment to fill out our players files
 		
 
 def averageMVPProcess():
@@ -86,7 +87,7 @@ def getMVPSeasonStats(masterDataFrame):
 		mvpURLHTML = urllib2.urlopen(mvpURL)
 		soupObj = BeautifulSoup(mvpURLHTML,"html.parser")
 
-		columnHeaders = ["FG_G","FGA_G","FG_PCT","RBD_G","AST_G","PTS_G"]
+		columnHeaders = ["FG_G","FGA_G","FG_PCT","RBD_G","AST_G","PTS_G","TS_G","ASTPCT_G","TOV_PCT_G","USG_PCT_G"]
 		playerData = []
 
 		#Get the year, ex 2017 for 2016-17
@@ -97,8 +98,21 @@ def getMVPSeasonStats(masterDataFrame):
 		seasonStats = (tablePerGame.findAll('td'))
 		tmpSeasonStats = []
 
+		#Advanced overall table - commented
+		#advTablePerGame = soupObj.find('div',id='all_advanced').find('tr',id='advanced.'+playedYear)
+		placeholders = soupObj.findAll('div',class_='placeholder')
+		for item in placeholders:
+			comment=''.join(item.next_siblings)
+			soupComment = BeautifulSoup(comment,'html.parser')
+			advTablePerGame=soupComment.find('table',id="advanced")
+			if advTablePerGame:
+				advTablePerGame = (advTablePerGame.find('tr',id='advanced.'+playedYear))
+				break
+		advSeasonStats = advTablePerGame.findAll('td')
+
 		#Stats that will be used for both MVP stats and Player stats (are linked)
 		mvpStatsDesired = ["fg_per_g","fga_per_g","fg_pct","trb_per_g","ast_per_g","pts_per_g"]
+		mvpAdvStatsDesired = ["ts_pct","ast_pct","tov_pct","usg_pct"]
 
 		#Loop through stats of MVPSTATSDESIRED to build MVP data frame
 		for td in seasonStats:
@@ -106,9 +120,20 @@ def getMVPSeasonStats(masterDataFrame):
 				if(td['data-stat'] == statOfInterest):
 					tmpSeasonStats.append(td.getText())
 
+				
 				if len(tmpSeasonStats) == len(mvpStatsDesired):
-					playerData.append(tmpSeasonStats)
-					tmpSeasonStats = []
+
+					for td in advSeasonStats:
+						for statOfInterest in mvpAdvStatsDesired:
+							if td['data-stat'] == statOfInterest:
+								tmpSeasonStats.append(td.getText())
+
+							if len(tmpSeasonStats) == len(mvpStatsDesired) + len(mvpAdvStatsDesired):
+								playerData.append(tmpSeasonStats)
+								tmpSeasonStats = []
+				
+		
+
 
 		#Temp Dataframe for single mvps stats single season
 		seasonStatsDataFrame = pandas.DataFrame(playerData,columns=columnHeaders)
@@ -144,7 +169,12 @@ def analyzeMVPStats(playerUnderStudy,playedYear):
 	gameStatsURL = basketballReferenceURL.format(params=mvpHrefDict[playerUnderStudy][:-5]+'/gamelog/'+playedYear)
 	gameStatsHTML = urllib2.urlopen(gameStatsURL)
 	soupObj = BeautifulSoup(gameStatsHTML,"html.parser")
-	mvpGameStatsDF= getPlayerGameStatsTrad(soupObj)
+	#Advanced stats gamelog
+	advancedStatsURL = basketballReferenceURL.format(params=mvpHrefDict[playerUnderStudy][:-5]+'/gamelog-advanced/'+playedYear)
+	advancedStatsHTML = urllib2.urlopen(advancedStatsURL)
+	advSoupObj = BeautifulSoup(advancedStatsHTML,"html.parser")
+	
+	mvpGameStatsDF= getPlayerGameStatsTrad(soupObj,advSoupObj)
 	return mvpGameStatsDF
 
 def getMeanMVPStatistic(statsList,gameStatsDF):
@@ -174,10 +204,16 @@ def writeMVPAverageStatsToFile(columnHeaders,avgDF):
 #Get the play href extension and pass the soupObj to getPlayerGameStatsTrad
 def getPlayerStatsSeason(playerName,season):
 	playerHref = allPlayersHrefDict[playerName]
+	#Traditional Stats gamelog
 	gameStatsURL = basketballReferenceURL.format(params=playerHref[:-5]+'/gamelog/'+season)
 	gameStatsHTML = urllib2.urlopen(gameStatsURL)
+	#Advanced stats gamelog
+	advancedStatsURL = basketballReferenceURL.format(params=playerHref[:-5]+'/gamelog-advanced/'+season)
+	advancedStatsHTML = urllib2.urlopen(advancedStatsURL)
+
 	soupObj = BeautifulSoup(gameStatsHTML,"html.parser")
-	playerTradStatsDF = getPlayerGameStatsTrad(soupObj)
+	advSoupObj = BeautifulSoup(advancedStatsHTML,"html.parser")
+	playerTradStatsDF = getPlayerGameStatsTrad(soupObj,advSoupObj)
 	#Write stats to csv
 	parentFolder = (os.path.abspath(os.path.join(os.getcwd(), os.pardir)))
 	parentFolder = os.path.join(parentFolder,'Data Store/'+season+'/')
@@ -185,13 +221,15 @@ def getPlayerStatsSeason(playerName,season):
 	playerTradStatsDF.to_csv(parentFolder+fileName+"_Stats_"+season+'.csv')
 
 #Return dataframe with players game played and stats in season specified from url
-def getPlayerGameStatsTrad(soupObj):
+def getPlayerGameStatsTrad(soupObj,advSoupObj):
 	#Columns - THIS ARRAY NEEDS TO MATCH UP WITH MASTER DF COLUMN HEADERS WHEN ADDING DATA
-	columnHeaders = ['Game','FG_G',"FGA_G","FG_PCT","RBD_G",'AST_G','PTS_G']
+
+	columnHeaders = ['Game',"FG_G","FGA_G","FG_PCT","RBD_G","AST_G","PTS_G"]
 	colIdxs = [1,27]
 	playerData = []
 	#Table rows data
 	traditionalTable = soupObj.find('div',id="all_pgl_basic").find('tbody').findAll("tr")
+	advancedTable = advSoupObj.find('div',id="all_pgl_advanced").find('tbody').findAll("tr")
 
 	#An array of a stat for a player in that season used to calc running average
 	statItemInGame = []
@@ -202,10 +240,14 @@ def getPlayerGameStatsTrad(soupObj):
 
 	#Loop through desired stats for a player in season
 	statsOfInterest = ["fg","fga","trb","ast","pts"]
+	advStatOfInterest = ["ts_pct","ast_pct","tov_pct","usg_pct"]
+
 	#Dict used to store single stats for a player in a season
 	#key: statOfInterest Val: List of stats game by game
 	runningStatAvgDict = dict()
 	
+	#probably make this part below general
+
 	for row in traditionalTable:
 		gameNumber = (row.find('th',{"data-stat":"ranker"}))
 		dnp = (row.find('td',{"data-stat":"reason"}))
@@ -254,6 +296,74 @@ def getPlayerGameStatsTrad(soupObj):
 					else:
 						tmpGameData.insert(3,0)
 
+					gameData.append(tmpGameData)
+					tmpGameData = []
+
+	tradDF = pandas.DataFrame(gameData,columns=columnHeaders)
+	advDF = getPlayerGameStatsAdvanced(tradDF,advSoupObj)
+
+	return(pandas.concat([tradDF.set_index('Game'),advDF.set_index('Game')],axis=1, join = 'inner').reset_index())
+
+def getPlayerGameStatsAdvanced(tradDF,advSoupObj):
+	columnHeaders = ['Game',"TS_G","ASTPCT_G","TOV_PCT_G","USG_PCT_G"]
+	advancedTable = advSoupObj.find('div',id="all_pgl_advanced").find('tbody').findAll("tr")
+
+	#An array of a stat for a player in that season used to calc running average
+	statItemInGame = []
+	
+	#Use game data to build dataframe
+	tmpGameData = []
+	gameData = []
+
+	#Loop through desired stats for a player in season
+	advStatOfInterest = ["ts_pct","ast_pct","tov_pct","usg_pct"]
+
+	#Dict used to store single stats for a player in a season
+	#key: statOfInterest Val: List of stats game by game
+	runningStatAvgDict = dict()
+
+	for row in advancedTable:
+		gameNumber = (row.find('th',{"data-stat":"ranker"}))
+		dnp = (row.find('td',{"data-stat":"reason"}))
+
+		#For each stat in statsOfInterest
+		for statUnderStudy in advStatOfInterest:
+			statItem = row.find('td',{"data-stat":statUnderStudy})
+
+			if gameNumber is not None: 
+
+				if statItem is not None:
+
+					#For first played game of season start dict
+					if statUnderStudy not in runningStatAvgDict:
+						#If the table has an empty cell for this stat - just set the value to 0.
+						if statItem.getText() == '':
+							runningStatAvgDict[statUnderStudy]= [0]
+						else:
+							runningStatAvgDict[statUnderStudy]= [float(statItem.getText())]
+					#Append game values to dictionary
+					else:
+						if statItem.getText() == '':
+							runningStatAvgDict[statUnderStudy].append(0)
+						else:
+							runningStatAvgDict[statUnderStudy].append(float(statItem.getText()))
+
+					#Calculate running average by getting the list of stat values for a statUnder study and getting the mean of it
+					statItemInGame = runningStatAvgDict[statUnderStudy]
+					runningAvgStat = sum(statItemInGame)/len(statItemInGame)
+					tmpGameData.append(float(runningAvgStat))
+
+				#For DNPs, append the running average so far
+				elif dnp is not None:
+					if statUnderStudy in runningStatAvgDict:
+						tmpGameData.append(sum(runningStatAvgDict[statUnderStudy])/len(runningStatAvgDict[statUnderStudy]))
+					#If they have no stats yet its just 0
+					else:
+						tmpGameData.append(0) 
+
+				#When theres a stat value for each game, append to game data and reset tmpGameData
+				if len(tmpGameData) == len(advStatOfInterest):
+					tmpGameData.insert(0, gameNumber.getText())
 					gameData.append(tmpGameData)
 					tmpGameData = []
 
