@@ -50,7 +50,7 @@ def seasonIndexParse(soup):
 		columnHeaders.append(soup.findAll('tr',limit=2)[1].findAll('th')[column].getText())
 	
 	#set data from table - we're going back to 86-87 season - 3:33
-	dataRows = soup.findAll('tr')[3:33]
+	dataRows = soup.findAll('tr')[3:5]
 	#For each table row, extract the text from the data element
 	for row in dataRows:
 		seasonsTag = row.findAll('a',href=True)[0]
@@ -87,7 +87,7 @@ def getMVPSeasonStats(masterDataFrame):
 		mvpURLHTML = urllib2.urlopen(mvpURL)
 		soupObj = BeautifulSoup(mvpURLHTML,"html.parser")
 
-		columnHeaders = ["FG_G","FGA_G","FG_PCT","RBD_G","AST_G","PTS_G","TS_G","ASTPCT_G","TOV_PCT_G","USG_PCT_G"]
+		columnHeaders = ["MP_G","FG_G","FGA_G","FG_PCT","3FG_G","3FGA_G","3FG_PCT","eFG_PCT","FT_G","FTA_G","FT_PCT","RBD_G","AST_G","PTS_G","TS_G","ASTPCT_G","TOV_PCT_G","USG_PCT_G"]
 		playerData = []
 
 		#Get the year, ex 2017 for 2016-17
@@ -111,7 +111,7 @@ def getMVPSeasonStats(masterDataFrame):
 		advSeasonStats = advTablePerGame.findAll('td')
 
 		#Stats that will be used for both MVP stats and Player stats (are linked)
-		mvpStatsDesired = ["fg_per_g","fga_per_g","fg_pct","trb_per_g","ast_per_g","pts_per_g"]
+		mvpStatsDesired = ["mp_per_g","fg_per_g","fga_per_g","fg_pct","fg3_per_g","fg3a_per_g","fg3_pct","efg_pct","ft_per_g","fta_per_g","ft_pct","trb_per_g","ast_per_g","pts_per_g"]
 		mvpAdvStatsDesired = ["ts_pct","ast_pct","tov_pct","usg_pct"]
 
 		#Loop through stats of MVPSTATSDESIRED to build MVP data frame
@@ -224,12 +224,11 @@ def getPlayerStatsSeason(playerName,season):
 def getPlayerGameStatsTrad(soupObj,advSoupObj):
 	#Columns - THIS ARRAY NEEDS TO MATCH UP WITH MASTER DF COLUMN HEADERS WHEN ADDING DATA
 
-	columnHeaders = ['Game',"FG_G","FGA_G","FG_PCT","RBD_G","AST_G","PTS_G"]
+	columnHeaders = ['Game',"MP_G","FG_G","FGA_G","FG_PCT","3FG_G","3FGA_G","3FG_PCT","eFG_PCT","FT_G","FTA_G","FT_PCT","RBD_G","AST_G","PTS_G","TS_G"]
 	colIdxs = [1,27]
 	playerData = []
 	#Table rows data
 	traditionalTable = soupObj.find('div',id="all_pgl_basic").find('tbody').findAll("tr")
-	advancedTable = advSoupObj.find('div',id="all_pgl_advanced").find('tbody').findAll("tr")
 
 	#An array of a stat for a player in that season used to calc running average
 	statItemInGame = []
@@ -239,8 +238,7 @@ def getPlayerGameStatsTrad(soupObj,advSoupObj):
 	gameData = []
 
 	#Loop through desired stats for a player in season
-	statsOfInterest = ["fg","fga","trb","ast","pts"]
-	advStatOfInterest = ["ts_pct","ast_pct","tov_pct","usg_pct"]
+	statsOfInterest = ["mp","fg","fga","fg3","fg3a","ft","fta","trb","ast","pts"]
 
 	#Dict used to store single stats for a player in a season
 	#key: statOfInterest Val: List of stats game by game
@@ -266,13 +264,25 @@ def getPlayerGameStatsTrad(soupObj,advSoupObj):
 						if statItem.getText() == '':
 							runningStatAvgDict[statUnderStudy]= [0]
 						else:
-							runningStatAvgDict[statUnderStudy]= [float(statItem.getText())]
+							if statUnderStudy == "mp":
+								minuteVal = statItem.getText()
+								minutes = (minuteVal[:minuteVal.find(":")])
+								seconds = (minuteVal[minuteVal.find(":")+1:])
+								runningStatAvgDict[statUnderStudy] = [float(minutes)+(float(seconds)/60)]
+							else:	
+								runningStatAvgDict[statUnderStudy]= [float(statItem.getText())]
 					#Append game values to dictionary
 					else:
 						if statItem.getText() == '':
-							runningStatAvgDict[statUnderStudy].append(0)
+							runningStatAvgDict[statUnderStudy].append(runningStatAvgDict[statUnderStudy])
 						else:
-							runningStatAvgDict[statUnderStudy].append(float(statItem.getText()))
+							if statUnderStudy == "mp":
+								minuteVal = statItem.getText()
+								minutes = (minuteVal[:minuteVal.find(":")])
+								seconds = (minuteVal[minuteVal.find(":")+1:])
+								runningStatAvgDict[statUnderStudy].append(float(minutes)+(float(seconds)/60))
+							else:
+								runningStatAvgDict[statUnderStudy].append(float(statItem.getText()))
 
 					#Calculate running average by getting the list of stat values for a statUnder study and getting the mean of it
 					statItemInGame = runningStatAvgDict[statUnderStudy]
@@ -290,11 +300,17 @@ def getPlayerGameStatsTrad(soupObj,advSoupObj):
 				#When theres a stat value for each game, append to game data and reset tmpGameData
 				if len(tmpGameData) == len(statsOfInterest):
 					tmpGameData.insert(0, gameNumber.getText())
-					#FG% calculation and avoid divide by 0
-					if tmpGameData[2] != 0:
-						tmpGameData.insert(3,float(tmpGameData[1])/float(tmpGameData[2]))	
-					else:
-						tmpGameData.insert(3,0)
+					#FG% calculation 
+					tmpGameData.insert(4,advStatCalc.percentMade(tmpGameData[2],tmpGameData[3]))	
+					#3FG% calculation
+					tmpGameData.insert(7,advStatCalc.percentMade(tmpGameData[5],tmpGameData[6]))
+					#eFG% calculation
+					tmpGameData.insert(8,advStatCalc.eFGPct(tmpGameData[2],tmpGameData[5],tmpGameData[3]))
+					#FT% calculation
+					tmpGameData.insert(11,advStatCalc.percentMade(tmpGameData[9],tmpGameData[10]))
+					#TS% calculation
+					tmpGameData.insert(15,advStatCalc.TSPct(tmpGameData[14],tmpGameData[3],tmpGameData[10]))
+
 
 					gameData.append(tmpGameData)
 					tmpGameData = []
@@ -305,7 +321,7 @@ def getPlayerGameStatsTrad(soupObj,advSoupObj):
 	return(pandas.concat([tradDF.set_index('Game'),advDF.set_index('Game')],axis=1, join = 'inner').reset_index())
 
 def getPlayerGameStatsAdvanced(tradDF,advSoupObj):
-	columnHeaders = ['Game',"TS_G","ASTPCT_G","TOV_PCT_G","USG_PCT_G"]
+	columnHeaders = ['Game',"ASTPCT_G","TOV_PCT_G","USG_PCT_G"]
 	advancedTable = advSoupObj.find('div',id="all_pgl_advanced").find('tbody').findAll("tr")
 
 	#An array of a stat for a player in that season used to calc running average
@@ -316,7 +332,7 @@ def getPlayerGameStatsAdvanced(tradDF,advSoupObj):
 	gameData = []
 
 	#Loop through desired stats for a player in season
-	advStatOfInterest = ["ts_pct","ast_pct","tov_pct","usg_pct"]
+	advStatOfInterest = ["ast_pct","tov_pct","usg_pct"]
 
 	#Dict used to store single stats for a player in a season
 	#key: statOfInterest Val: List of stats game by game
