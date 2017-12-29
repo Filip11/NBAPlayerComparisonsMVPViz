@@ -26,7 +26,7 @@ def main():
 		player=playerSeason[0]
 		season=playerSeason[1]
 		#Get player stats per game
-		#playerTradDF = getPlayerStatsSeason(player,season) #uncomment to fill out our players files
+		playerTradDF = getPlayerStatsSeason(player,season) #uncomment to fill out our players files
 		
 
 def averageMVPProcess():
@@ -50,7 +50,7 @@ def seasonIndexParse(soup):
 		columnHeaders.append(soup.findAll('tr',limit=2)[1].findAll('th')[column].getText())
 	
 	#set data from table - we're going back to 86-87 season - 3:33
-	dataRows = soup.findAll('tr')[3:5]
+	dataRows = soup.findAll('tr')[3:33]
 	#For each table row, extract the text from the data element
 	for row in dataRows:
 		seasonsTag = row.findAll('a',href=True)[0]
@@ -87,7 +87,7 @@ def getMVPSeasonStats(masterDataFrame):
 		mvpURLHTML = urllib2.urlopen(mvpURL)
 		soupObj = BeautifulSoup(mvpURLHTML,"html.parser")
 
-		columnHeaders = ["MP_G","FG_G","FGA_G","FG_PCT","3FG_G","3FGA_G","3FG_PCT","eFG_PCT","FT_G","FTA_G","FT_PCT","RBD_G","AST_G","PTS_G","TS_G","ASTPCT_G","TOV_PCT_G","USG_PCT_G"]
+		columnHeaders = ["MP_G","FG_G","FGA_G","FG_PCT","3FG_G","3FGA_G","3FG_PCT","eFG_PCT","FT_G","FTA_G","FT_PCT","RBD_G","AST_G","PTS_G","TS_G","ASTPCT_G","TOV_PCT_G","USG_PCT_G","OFRTG_G","DFRTG_G"]
 		playerData = []
 
 		#Get the year, ex 2017 for 2016-17
@@ -105,14 +105,23 @@ def getMVPSeasonStats(masterDataFrame):
 			comment=''.join(item.next_siblings)
 			soupComment = BeautifulSoup(comment,'html.parser')
 			advTablePerGame=soupComment.find('table',id="advanced")
+			perPoss =soupComment.find('table',id="per_poss")
+			if perPoss:
+				per100TablePerGame = perPoss.find('tr',id='per_poss.'+playedYear)
 			if advTablePerGame:
 				advTablePerGame = (advTablePerGame.find('tr',id='advanced.'+playedYear))
+				
+
 				break
+
 		advSeasonStats = advTablePerGame.findAll('td')
+		per100SeasonStats = per100TablePerGame.findAll('td')
+
 
 		#Stats that will be used for both MVP stats and Player stats (are linked)
 		mvpStatsDesired = ["mp_per_g","fg_per_g","fga_per_g","fg_pct","fg3_per_g","fg3a_per_g","fg3_pct","efg_pct","ft_per_g","fta_per_g","ft_pct","trb_per_g","ast_per_g","pts_per_g"]
 		mvpAdvStatsDesired = ["ts_pct","ast_pct","tov_pct","usg_pct"]
+		mvpPer100StatsDesired = ["off_rtg","def_rtg"]
 
 		#Loop through stats of MVPSTATSDESIRED to build MVP data frame
 		for td in seasonStats:
@@ -120,7 +129,7 @@ def getMVPSeasonStats(masterDataFrame):
 				if(td['data-stat'] == statOfInterest):
 					tmpSeasonStats.append(td.getText())
 
-				
+				#ADV STAT TABLE
 				if len(tmpSeasonStats) == len(mvpStatsDesired):
 
 					for td in advSeasonStats:
@@ -129,10 +138,16 @@ def getMVPSeasonStats(masterDataFrame):
 								tmpSeasonStats.append(td.getText())
 
 							if len(tmpSeasonStats) == len(mvpStatsDesired) + len(mvpAdvStatsDesired):
-								playerData.append(tmpSeasonStats)
-								tmpSeasonStats = []
-				
-		
+
+								for td in per100SeasonStats:
+									for per100StatOfInterest in mvpPer100StatsDesired:
+										if td['data-stat'] == per100StatOfInterest:
+											tmpSeasonStats.append(td.getText())
+
+										if len(tmpSeasonStats) == len(mvpStatsDesired) + len(mvpAdvStatsDesired) + len(mvpPer100StatsDesired):
+											playerData.append(tmpSeasonStats)
+											tmpSeasonStats = []
+					
 
 
 		#Temp Dataframe for single mvps stats single season
@@ -321,7 +336,7 @@ def getPlayerGameStatsTrad(soupObj,advSoupObj):
 	return(pandas.concat([tradDF.set_index('Game'),advDF.set_index('Game')],axis=1, join = 'inner').reset_index())
 
 def getPlayerGameStatsAdvanced(tradDF,advSoupObj):
-	columnHeaders = ['Game',"ASTPCT_G","TOV_PCT_G","USG_PCT_G"]
+	columnHeaders = ['Game',"ASTPCT_G","TOV_PCT_G","USG_PCT_G","OFRTG_G","DFRTG_G"]
 	advancedTable = advSoupObj.find('div',id="all_pgl_advanced").find('tbody').findAll("tr")
 
 	#An array of a stat for a player in that season used to calc running average
@@ -332,7 +347,7 @@ def getPlayerGameStatsAdvanced(tradDF,advSoupObj):
 	gameData = []
 
 	#Loop through desired stats for a player in season
-	advStatOfInterest = ["ast_pct","tov_pct","usg_pct"]
+	advStatOfInterest = ["ast_pct","tov_pct","usg_pct","off_rtg","def_rtg"]
 
 	#Dict used to store single stats for a player in a season
 	#key: statOfInterest Val: List of stats game by game
