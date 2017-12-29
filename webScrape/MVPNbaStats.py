@@ -26,7 +26,7 @@ def main():
 		player=playerSeason[0]
 		season=playerSeason[1]
 		#Get player stats per game
-		playerTradDF = getPlayerStatsSeason(player,season) #uncomment to fill out our players files
+		#playerTradDF = getPlayerStatsSeason(player,season) #uncomment to fill out our players files
 		
 
 def averageMVPProcess():
@@ -50,7 +50,7 @@ def seasonIndexParse(soup):
 		columnHeaders.append(soup.findAll('tr',limit=2)[1].findAll('th')[column].getText())
 	
 	#set data from table - we're going back to 86-87 season - 3:33
-	dataRows = soup.findAll('tr')[3:33]
+	dataRows = soup.findAll('tr')[3:5]
 	#For each table row, extract the text from the data element
 	for row in dataRows:
 		seasonsTag = row.findAll('a',href=True)[0]
@@ -87,7 +87,7 @@ def getMVPSeasonStats(masterDataFrame):
 		mvpURLHTML = urllib2.urlopen(mvpURL)
 		soupObj = BeautifulSoup(mvpURLHTML,"html.parser")
 
-		columnHeaders = ["MP_G","FG_G","FGA_G","FG_PCT","3FG_G","3FGA_G","3FG_PCT","eFG_PCT","FT_G","FTA_G","FT_PCT","RBD_G","AST_G","PTS_G","TS_G","ASTPCT_G","TOV_PCT_G","USG_PCT_G","OFRTG_G","DFRTG_G"]
+		columnHeaders = ["Name","MP_G","FG_G","FGA_G","FG_PCT","3FG_G","3FGA_G","3FG_PCT","eFG_PCT","FT_G","FTA_G","FT_PCT","RBD_G","AST_G","PTS_G","TS_G","ASTPCT_G","TOV_PCT_G","USG_PCT_G","OFRTG_G","DFRTG_G"]
 		playerData = []
 
 		#Get the year, ex 2017 for 2016-17
@@ -145,6 +145,7 @@ def getMVPSeasonStats(masterDataFrame):
 											tmpSeasonStats.append(td.getText())
 
 										if len(tmpSeasonStats) == len(mvpStatsDesired) + len(mvpAdvStatsDesired) + len(mvpPer100StatsDesired):
+											tmpSeasonStats.insert(0,"Average MVP")
 											playerData.append(tmpSeasonStats)
 											tmpSeasonStats = []
 					
@@ -162,6 +163,8 @@ def getMVPSeasonStats(masterDataFrame):
 
 	#Set our master data frame equal to DF with mean of every stat in column headers
 	mvpMeanFinalDF = getMeanMVPStatistic(columnHeaders,mvpPerGameDF)
+
+	mvpMeanFinalDF['Name'] = 'Average MVP'
 
 	#Write stats to csv
 	writeMVPAverageStatsToFile(columnHeaders,mvpMeanFinalDF)
@@ -189,7 +192,7 @@ def analyzeMVPStats(playerUnderStudy,playedYear):
 	advancedStatsHTML = urllib2.urlopen(advancedStatsURL)
 	advSoupObj = BeautifulSoup(advancedStatsHTML,"html.parser")
 	
-	mvpGameStatsDF= getPlayerGameStatsTrad(soupObj,advSoupObj)
+	mvpGameStatsDF= getPlayerGameStatsTrad(soupObj,advSoupObj,playerUnderStudy+" "+playedYear)
 	return mvpGameStatsDF
 
 def getMeanMVPStatistic(statsList,gameStatsDF):
@@ -228,7 +231,8 @@ def getPlayerStatsSeason(playerName,season):
 
 	soupObj = BeautifulSoup(gameStatsHTML,"html.parser")
 	advSoupObj = BeautifulSoup(advancedStatsHTML,"html.parser")
-	playerTradStatsDF = getPlayerGameStatsTrad(soupObj,advSoupObj)
+	playerTradStatsDF = getPlayerGameStatsTrad(soupObj,advSoupObj,playerName+" "+season)
+
 	#Write stats to csv
 	parentFolder = (os.path.abspath(os.path.join(os.getcwd(), os.pardir)))
 	parentFolder = os.path.join(parentFolder,'Data Store/'+season+'/')
@@ -236,10 +240,10 @@ def getPlayerStatsSeason(playerName,season):
 	playerTradStatsDF.to_csv(parentFolder+fileName+"_Stats_"+season+'.csv')
 
 #Return dataframe with players game played and stats in season specified from url
-def getPlayerGameStatsTrad(soupObj,advSoupObj):
+def getPlayerGameStatsTrad(soupObj,advSoupObj,id):
 	#Columns - THIS ARRAY NEEDS TO MATCH UP WITH MASTER DF COLUMN HEADERS WHEN ADDING DATA
 
-	columnHeaders = ['Game',"MP_G","FG_G","FGA_G","FG_PCT","3FG_G","3FGA_G","3FG_PCT","eFG_PCT","FT_G","FTA_G","FT_PCT","RBD_G","AST_G","PTS_G","TS_G"]
+	columnHeaders = ['Name','Game',"MP_G","FG_G","FGA_G","FG_PCT","3FG_G","3FGA_G","3FG_PCT","eFG_PCT","FT_G","FTA_G","FT_PCT","RBD_G","AST_G","PTS_G","TS_G"]
 	colIdxs = [1,27]
 	playerData = []
 	#Table rows data
@@ -326,6 +330,7 @@ def getPlayerGameStatsTrad(soupObj,advSoupObj):
 					#TS% calculation
 					tmpGameData.insert(15,advStatCalc.TSPct(tmpGameData[14],tmpGameData[3],tmpGameData[10]))
 
+					tmpGameData.insert(0,id)
 
 					gameData.append(tmpGameData)
 					tmpGameData = []
