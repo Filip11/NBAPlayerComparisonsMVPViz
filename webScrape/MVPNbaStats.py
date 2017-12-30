@@ -26,7 +26,7 @@ def main():
 		player=playerSeason[0]
 		season=playerSeason[1]
 		#Get player stats per game
-		#playerTradDF = getPlayerStatsSeason(player,season) #uncomment to fill out our players files
+		playerTradDF = getPlayerStatsSeason(player,season) #uncomment to fill out our players files
 		
 
 def averageMVPProcess():
@@ -50,7 +50,7 @@ def seasonIndexParse(soup):
 		columnHeaders.append(soup.findAll('tr',limit=2)[1].findAll('th')[column].getText())
 	
 	#set data from table - we're going back to 86-87 season - 3:33
-	dataRows = soup.findAll('tr')[3:5]
+	dataRows = soup.findAll('tr')[3:33]
 	#For each table row, extract the text from the data element
 	for row in dataRows:
 		seasonsTag = row.findAll('a',href=True)[0]
