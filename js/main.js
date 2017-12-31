@@ -18,9 +18,9 @@ $(document).ready(function() {
 	$("#stat").on("change", drawGraph);
 
 	// set the dimensions and margins of the graph
-	var margin = {top: 20, right: 200, bottom: 50, left: 50},
-	    width = 960 - margin.left - margin.right,
-	    height = 500 - margin.top - margin.bottom;
+	var margin = {top: 20, right: 220, bottom: 50, left: 50},
+	    width = 1200 - margin.left - margin.right,
+	    height = 600 - margin.top - margin.bottom;
 
 
 	// set the ranges
@@ -53,6 +53,8 @@ $(document).ready(function() {
 	    return d3.axisLeft(y)
 	        .ticks(10)
 	}
+
+
 
 	function drawGraph(){
 		seasonYear = ($("#season")[0].value) //This is folder name
@@ -96,11 +98,23 @@ $(document).ready(function() {
 			
 			//Colors  to use for lines
 			var colors = ['#FFD700','steelblue','purple']
-	
+			var legendRectSize = 15;                                  // NEW
+			var legendSpacing = 4;                                    // NEW
 		  		
 		  	// Scale the domain of the data
 			x.domain(d3.extent(mergedData, function(d) { return d.Game; }));
-			y.domain(d3.extent(mergedData, function(d) { return d.Stat_G; }));
+			//y.domain(d3.extent(mergedData, function(d) { return d.Stat_G; }));
+			var playerMaxValue = d3.max(mergedData, function(d){
+				return d.Stat_G
+			})
+			var playerMinValue = d3.min(mergedData,function(d){
+				return d.Stat_G
+			})
+			if (playerMinValue != 0){
+				playerMinValue = playerMinValue - (playerMinValue*0.15);
+			}
+			//15% buffer at top/bottom of graph
+			y.domain([playerMinValue,playerMaxValue+(0.1*playerMaxValue)])
 
 			//Refresh grid
 			svg.selectAll(".grid").remove()
@@ -129,12 +143,11 @@ $(document).ready(function() {
 			// Loop through each symbol / key and draw line
 		    dataGroup.forEach(function(d,index) {
 		        svg.append("path")
-		            .attr("class", "line")
-		            .style("stroke", colors[index])
-		            .attr("d", valueline(d.values));
+	            .attr("class", "line")
+	            .style("stroke", colors[index])
+	            .attr("d", valueline(d.values));
 
 		    });
-
 
 			// Add the X Axis
 			svg.append("g")
@@ -152,9 +165,12 @@ $(document).ready(function() {
 			  	.transition().duration(500)
 			    .call(d3.axisLeft(y).ticks(10,"s"))
 
+			svg.selectAll(".axisLabel").remove()
+
 			//Add Text for Y axis
 			svg.append("text")
 			    .attr("transform", "rotate(-90)")
+			    .attr("class","axisLabel")
 			    .attr("y", 0 - margin.left)
 			    .attr("x",0 - (height / 2))
 			    .attr("dy", "1em")
@@ -166,8 +182,129 @@ $(document).ready(function() {
 		      	.attr("transform",
 		        	"translate(" + (width/2) + " ," + 
 		                (height + margin.top + 20) + ")")
+		      	.attr("class","axisLabel")
 		      	.style("text-anchor", "middle")
 		      	.text("Game");
+
+		    /*  Create Legend  */
+		    svg.selectAll(".legend").remove()
+		    var legend = svg.selectAll('.legend')                     
+				.data(dataGroup)                                   
+				.enter()                                                
+				.append('g')                                            
+				.attr('class', 'legend')                                
+				.attr('transform', function(d, i) {                     
+					var height = legendRectSize + legendSpacing;          
+					var offset =  height * dataGroup.length / 2;     
+					var horz = width + legendRectSize;                       
+					var vert = i * height - offset+20                       
+					return 'translate(' + horz + ',' + vert + ')';        
+				});                                                     
+
+			//Get legend rect colors from line color
+            legend.append('rect')                                     
+              .attr('width', legendRectSize)                         
+              .attr('height', legendRectSize)
+              .attr('fill',function(d,i){
+              	return colors[i];
+              })                         
+              .style('stroke', "black");                                
+
+            //Get legend text from nest kets
+            legend.append('text')                                     // NEW
+              .attr('x', legendRectSize + legendSpacing)              // NEW
+              .attr('y', legendRectSize - legendSpacing)              // NEW
+              .text(function(d) {
+              	return d.key;
+               });
+              				svg.selectAll(".mouse-per-line").remove()
+            			    //Add mouse over effects
+            			    var mouseG = svg.append("g")
+                  				.attr("class", "mouse-over-effects");
+
+                  			var linesOnGraph = document.getElementsByClassName('line');
+                  			mouseG.append("path") // this is the black vertical line to follow mouse
+            					.attr("class", "mouse-line")
+            					.style("stroke", "black")
+            					.style("stroke-width", "1px")
+            					.style("opacity", "0");
+
+            			    var mousePerLine = mouseG.selectAll('.mouse-per-line')
+            					.data(dataGroup)
+            					.enter()
+            					.append("g")
+            					.attr("class", "mouse-per-line");
+
+            			    mousePerLine.append("circle")
+            					.attr("r", 4)
+            					.style("stroke", "black")
+            					.style("fill", "none")
+            					.style("stroke-width", "1px")
+            					.style("opacity", "0");
+
+            			    mousePerLine.append("text")
+            			     	.attr("transform", "translate(9,3)");
+
+            				mouseG.append('svg:rect') // append a rect to catch mouse movements on canvas
+            					.attr('width', width) // can't catch mouse events on a g element
+            					.attr('height', height)
+            					.attr('fill', 'none')
+            					.attr('pointer-events', 'all')
+            					.on('mouseout', function() { // on mouse out hide line, circles and text
+            						d3.select(".mouse-line")
+            							.style("opacity", "0");
+            						d3.selectAll(".mouse-per-line circle")
+                      					.style("opacity", "0");
+                    				d3.selectAll(".mouse-per-line text")
+                      					.style("opacity", "0");
+            					})
+            					.on('mouseover', function() { // on mouse in show line, circles and text
+            						d3.select(".mouse-line")
+            							.style("opacity", "0.7");
+            					    d3.selectAll(".mouse-per-line circle")
+                      					.style("opacity", "1");
+                    				d3.selectAll(".mouse-per-line text")
+                      					.style("opacity", "0.9");
+            					})
+            					.on('mousemove', function() { // mouse moving over canvas
+            				        var mouse = d3.mouse(this);
+            				        d3.select(".mouse-line")
+            				          .attr("d", function() {
+            				            var d = "M" + mouse[0] + "," + height;
+            				            d += " " + mouse[0] + "," + 0;
+            				            return d;
+            				          });
+            				         
+            				        // position the circle and text
+            				    	d3.selectAll(".mouse-per-line")
+                      					.attr("transform", function(d, i) {
+            				            var xGame = x.invert(mouse[0]),
+            				                bisect = d3.bisector(function(d) {
+            				                	return d.Game; }).right;
+            				                //idx = bisect(10, xGame);
+        					            var beginning = 0,
+        					                end = linesOnGraph[i].getTotalLength(),
+        					                target = null;
+            					            
+            					            while (true){
+            									target = Math.floor((beginning + end) / 2);
+            									pos = linesOnGraph[i].getPointAtLength(target);
+            									if ((target === end || target === beginning) && pos.x !== mouse[0]) {
+            										break;
+            									}
+            									if (pos.x > mouse[0])      end = target;
+            									else if (pos.x < mouse[0]) beginning = target;
+            									else break; //position found
+            									}
+            					            d3.select(this).select('text')
+            					            	.text(y.invert(pos.y).toFixed(2));
+
+            					              
+            					            return "translate(" + mouse[0] + "," + pos.y +")";
+            					            
+            					        });
+
+            					});
 
 		    //Transition of lines
 			      	
