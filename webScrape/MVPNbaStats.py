@@ -14,10 +14,12 @@ def main():
 	#Build dict with links for all NBA players
 	allPlayersHrefDict.update(generatePlayerRef.buildAllPlayersDict("https://www.basketball-reference.com/leagues/NBA_2017_per_game.html"))
 	#get Average MVPs and stats
-	averageMVPProcess()
+	#averageMVPProcess()
 
 	#Player season data to be retrieved
-	playersToStudy=[['Russell Westbrook','2017'],['James Harden','2017'],['Kawhi Leonard','2017'],['LeBron James','2017'],['Isaiah Thomas','2017'],['Stephen Curry','2017'],
+	playersToStudy=[['LeBron James','2018'],['James Harden','2018'],['Giannis Antetokounmpo','2018'],['Kevin Durant','2018'],['Kyrie Irving','2018'],['Stephen Curry','2018'],['Russell Westbrook','2018'],['DeMar DeRozan','2018'],['Anthony Davis','2018'],
+	['Kyle Lowry','2018'],['Karl-Anthony Towns','2018'],['Nikola Jokic','2018'],
+	['Russell Westbrook','2017'],['James Harden','2017'],['Kawhi Leonard','2017'],['LeBron James','2017'],['Isaiah Thomas','2017'],['Stephen Curry','2017'],
 	['John Wall','2017'],['Giannis Antetokounmpo','2017'],['Anthony Davis','2017'],['Kevin Durant','2017'],['DeMar DeRozan','2017'],['Stephen Curry','2016'],['Kawhi Leonard','2016'],
 	['LeBron James','2016'],['Russell Westbrook','2016'],['Kevin Durant','2016'],['Chris Paul','2016'],['Draymond Green','2016'],['Damian Lillard','2016'],['James Harden','2016'],
 	['Kyle Lowry','2016'],['Stephen Curry','2015'],['James Harden','2015'],['LeBron James','2015'],['Russell Westbrook','2015'],['Anthony Davis','2015'],['Chris Paul','2015'],
@@ -87,7 +89,7 @@ def getMVPSeasonStats(masterDataFrame):
 		mvpURLHTML = urllib2.urlopen(mvpURL)
 		soupObj = BeautifulSoup(mvpURLHTML,"html.parser")
 
-		columnHeaders = ["Name","MP_G","FG_G","FGA_G","FG_PCT","3FG_G","3FGA_G","3FG_PCT","eFG_PCT","FT_G","FTA_G","FT_PCT","RBD_G","AST_G","PTS_G","TS_G","ASTPCT_G","TOV_PCT_G","USG_PCT_G","OFRTG_G","DFRTG_G"]
+		columnHeaders = ["Name","MP_G","FG_G","FGA_G","FG_PCT","3FG_G","3FGA_G","3FG_PCT","eFG_PCT","FT_G","FTA_G","FT_PCT","RBD_G","AST_G","STL_G","PTS_G","TS_G","ASTPCT_G","TOV_PCT_G","USG_PCT_G","OFRTG_G","DFRTG_G"]
 		playerData = []
 
 		#Get the year, ex 2017 for 2016-17
@@ -119,7 +121,7 @@ def getMVPSeasonStats(masterDataFrame):
 
 
 		#Stats that will be used for both MVP stats and Player stats (are linked)
-		mvpStatsDesired = ["mp_per_g","fg_per_g","fga_per_g","fg_pct","fg3_per_g","fg3a_per_g","fg3_pct","efg_pct","ft_per_g","fta_per_g","ft_pct","trb_per_g","ast_per_g","pts_per_g"]
+		mvpStatsDesired = ["mp_per_g","fg_per_g","fga_per_g","fg_pct","fg3_per_g","fg3a_per_g","fg3_pct","efg_pct","ft_per_g","fta_per_g","ft_pct","trb_per_g","ast_per_g","stl_per_g","pts_per_g"]
 		mvpAdvStatsDesired = ["ts_pct","ast_pct","tov_pct","usg_pct"]
 		mvpPer100StatsDesired = ["off_rtg","def_rtg"]
 
@@ -243,7 +245,7 @@ def getPlayerStatsSeason(playerName,season):
 def getPlayerGameStatsTrad(soupObj,advSoupObj,id):
 	#Columns - THIS ARRAY NEEDS TO MATCH UP WITH MASTER DF COLUMN HEADERS WHEN ADDING DATA
 
-	columnHeaders = ['Name','Game',"MP_G","FG_G","FGA_G","FG_PCT","3FG_G","3FGA_G","3FG_PCT","eFG_PCT","FT_G","FTA_G","FT_PCT","RBD_G","AST_G","PTS_G","TS_G"]
+	columnHeaders = ['Name','Game',"MP_G","FG_G","FGA_G","FG_PCT","3FG_G","3FGA_G","3FG_PCT","eFG_PCT","FT_G","FTA_G","FT_PCT","RBD_G","AST_G","STL_G","PTS_G","TS_G"]
 	colIdxs = [1,27]
 	playerData = []
 	#Table rows data
@@ -257,7 +259,7 @@ def getPlayerGameStatsTrad(soupObj,advSoupObj,id):
 	gameData = []
 
 	#Loop through desired stats for a player in season
-	statsOfInterest = ["mp","fg","fga","fg3","fg3a","ft","fta","trb","ast","pts"]
+	statsOfInterest = ["mp","fg","fga","fg3","fg3a","ft","fta","trb","ast","stl","pts"]
 
 	#Dict used to store single stats for a player in a season
 	#key: statOfInterest Val: List of stats game by game
@@ -328,7 +330,7 @@ def getPlayerGameStatsTrad(soupObj,advSoupObj,id):
 					#FT% calculation
 					tmpGameData.insert(11,advStatCalc.percentMade(tmpGameData[9],tmpGameData[10]))
 					#TS% calculation
-					tmpGameData.insert(15,advStatCalc.TSPct(tmpGameData[14],tmpGameData[3],tmpGameData[10]))
+					tmpGameData.insert(16,advStatCalc.TSPct(tmpGameData[15],tmpGameData[3],tmpGameData[10]))
 
 					tmpGameData.insert(0,id)
 
