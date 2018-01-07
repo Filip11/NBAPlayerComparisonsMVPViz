@@ -45,21 +45,36 @@
 		margin-left: 145px;
 		display:flex;
 		align-items:center;
+		position: relative;
 	}
 	.legend{
 		shape-rendering:crispEdges
 	}
+	a:hover {
+ 		cursor:pointer;
+	}
+	a{
+		padding:5px;
+	}
+	label { display: block; }
 
 	</style>
 	<body>
 		<h2>NBA Player Comparisons</h2>
 		<div class="controls">
+			<form>
+			<label for="season">Season</label>
 			<select id="season" class="midAlign">
 				<!--<option selected disabled hidden>-- Select Season --</option>-->
+				<option value="2018">2017-2018</option>
 				<option value="2017" selected='selected'>2016-2017</option>
 				<option value="2016">2015-2016</option>
 				<option value="2015">2014-2015</option>
 			</select>
+			</form>
+			<form>
+			<label for="player">Player</label>
+
 			<select id="player" class="midAlign">
 				<option value='Russell_Westbrook_Stats_2017'>Russell Westbrook</option>
 				<option value='James_Harden_Stats_2017'>James Harden</option>
@@ -74,6 +89,9 @@
 				<option value='DeMar_DeRozan_Stats_2017'>DeMar DeRozan</option>
 				<!--<option value=""></option>-->
 			</select>
+			</form>
+			<form>
+			<label for="stat">Stat</label>
 			<select id = "stat" class ="midAlign">
 				<option value="PTS_G">PPG</option>
 				<option value="AST_G">AST</option>
@@ -81,6 +99,7 @@
 				<option value="FGA_G">FGA</option>
 				<option value="FG_PCT">FG%</option>
 				<option value= "RBD_G">RBD</option>
+				<option value= "STL_G">STL</option>				
 				<option value= "MP_G">MP</option>
 				<option value= "3FG_G">3FG</option>
 				<option value= "3FGA_G">3FGA</option>
@@ -97,9 +116,34 @@
 				<option value= "DFRTG_G">DRTG</option>
 
 			</select>
+			<a class="addPlayer" id = "0"><img src="icons/green_plus.png"></img> Add Player </a>
+		</form>
 		</div>
+		<div id="2player" class="controls" style="display: none;">
+			<select id = "season2" class ="midAlign"></select>
+			<select id = "player2" class ="midAlign"></select>
+			<a class="addPlayer" id = "1 "><img src="icons/green_plus.png"></img> Add Player </a>
+			<a class="removePlayer"id="1"><img src="icons/red_remove.png"></img> Remove Player  </a>
+		</div>
+		<div id="3player" class="controls" style="display: none;">
+			<select id = "season3" class ="midAlign"></select>
+			<select id = "player3" class ="midAlign"></select>
+			<a class="addPlayer" id = "2 "><img src="icons/green_plus.png"></img> Add Player </a>
+			<a class="removePlayer"id="2"><img src="icons/red_remove.png"></img> Remove Player  </a>
+		</div>
+		<div id="4player" class="controls" style="display: none;">
+			<select id = "season4" class ="midAlign"></select>
+			<select id = "player4" class ="midAlign"></select>
+			<a class="addPlayer" id = "3 "><img src="icons/green_plus.png"></img> Add Player </a>
+			<a class="removePlayer"id="3"><img src="icons/red_remove.png"></img> Remove Player  </a>
+		</div>
+		<div id="5player" class="controls" style="display: none;">
+			<select id = "season5" class ="midAlign"></select>
+			<select id = "player5" class ="midAlign"></select>
+			<a class="removePlayer"id="4"><img src="icons/red_remove.png"></img> Remove Player  </a>
+		</div>					
 		<div class="container-fluid">
-			<svg width="850" height="80"></svg>
+			<svg width="850" height="40"></svg>
 			<div id="comparisonGraph"></div>
 		</div>
 
