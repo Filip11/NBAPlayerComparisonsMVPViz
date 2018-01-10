@@ -1,6 +1,8 @@
 <!DOCTYPE html>
 <html>
 	<head>
+		
+
 		<!-- Global site tag (gtag.js) - Google Analytics -->
 		<script async src="https://www.googletagmanager.com/gtag/js?id=UA-111517562-1"></script>
 			<script>
@@ -12,6 +14,7 @@
 		</script>
 
 		<title> NBA Player Comparisons</title>
+		<link rel="icon" type="image/png" href="icons/favicon.png">
 		<link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
 		<style>
 
@@ -20,20 +23,26 @@
 		<script src="https://d3js.org/d3.v4.min.js"></script>
 		<script src="https://d3js.org/d3-scale-chromatic.v1.min.js"></script>
 		<script src="http://code.jquery.com/ui/1.12.0-rc.2/jquery-ui.js" ></script>
+		<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 		<script src="js/main.js"></script>
 
 
 	</head>
 	<style> /* set the CSS */
-
+	.title {
+		margin-left:100px;
+		margin-right:145px;
+		display: flex;
+		justify-content: space-between;
+	}
+	hr {
+		height: 4px;
+		border: 0;
+		box-shadow: 0 6px 6px -6px #8c8b8b inset;
+	}
 	.line {
 	  fill: none;
 	  stroke: steelblue;
-	  stroke-width: 2px;
-	}
-	.mvpline {
-	  fill: none;
-	  stroke: #FFD700;
 	  stroke-width: 2px;
 	}
 	.grid line {
@@ -42,25 +51,52 @@
 	  shape-rendering: crispEdges;
 	}
 	.controls {
-		margin-left: 145px;
+		margin-left: 60px;
 		display:flex;
 		align-items:center;
 		position: relative;
+		font-family:"Lucida Bright";
+		
+	}
+	form{
+		padding-top:10px;
 	}
 	.legend{
 		shape-rendering:crispEdges
+	}
+	.statSelect{
+		padding-left:440px;
+	}
+	.About{
+		margin-left: 60px;
 	}
 	a:hover {
  		cursor:pointer;
 	}
 	a{
-		padding:5px;
+		font-family:"Lucida Bright";
+	}
+	h2{
+		margin-left:60px;
+		font-family:"Lucida Bright";
 	}
 	label { display: block; }
 
 	</style>
 	<body>
-		<h2>NBA Player Comparisons</h2>
+		<div class="title">
+			<h2>NBA Player Comparisons</h2>
+			<h2><small>Developed & Designed by <a href="https://github.com/Filip11">Filip Drobnjakovic</a></small></h2>
+		</div>
+		<hr>
+		<a class="About"data-toggle="collapse" data-target="#demo">About</a>
+		<div id="demo" class="collapse">
+			<div class="controls">
+		  Lorem ipsum dolor sit amet, consectetur adipisicing elit,
+		  sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,
+		  quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
+		</div>
+		</div>
 		<div class="controls">
 			<form>
 			<label for="season">Season</label>
@@ -89,7 +125,9 @@
 				<option value='DeMar_DeRozan_Stats_2017'>DeMar DeRozan</option>
 				<!--<option value=""></option>-->
 			</select>
+			<a class="addPlayer" id = "0"><img src="icons/green_plus.png"></img> Add Player </a>
 			</form>
+			<div class="statSelect">
 			<form>
 			<label for="stat">Stat</label>
 			<select id = "stat" class ="midAlign">
@@ -116,8 +154,9 @@
 				<option value= "DFRTG_G">DRTG</option>
 
 			</select>
-			<a class="addPlayer" id = "0"><img src="icons/green_plus.png"></img> Add Player </a>
+			
 		</form>
+	</div>
 		</div>
 		<div id="2player" class="controls" style="display: none;">
 			<select id = "season2" class ="midAlign"></select>
@@ -143,7 +182,7 @@
 			<a class="removePlayer"id="4"><img src="icons/red_remove.png"></img> Remove Player  </a>
 		</div>					
 		<div class="container-fluid">
-			<svg width="850" height="40"></svg>
+			<svg width="860" height="10"></svg>
 			<div id="comparisonGraph"></div>
 		</div>
 
