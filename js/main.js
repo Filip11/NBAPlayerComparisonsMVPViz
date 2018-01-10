@@ -288,7 +288,7 @@ $(document).ready(function() {
               })                         
               .style('stroke', "black");                                
 
-            //Get legend text from nest kets
+            //Get legend text from nest 
             legend.append('text')                                     // NEW
               .attr('x', legendRectSize + legendSpacing)              // NEW
               .attr('y', legendRectSize - legendSpacing)              // NEW
