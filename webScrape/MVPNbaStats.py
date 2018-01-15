@@ -17,6 +17,8 @@ def main():
 	#get Average MVPs and stats
 	#averageMVPProcess()
 
+	singleStatsSetup()
+
 	#Player season data to be retrieved
 	playersToStudy=[['LeBron James','2018'],['James Harden','2018'],['Giannis Antetokounmpo','2018'],['Kevin Durant','2018'],['Kyrie Irving','2018'],['Stephen Curry','2018'],['Russell Westbrook','2018'],['DeMar DeRozan','2018'],['Anthony Davis','2018'],
 	['Kyle Lowry','2018'],['Karl-Anthony Towns','2018'],['Nikola Jokic','2018'],
@@ -43,6 +45,16 @@ def averageMVPProcess():
 	dataFrameWithStats = getMVPSeasonStats(dataFrame)
 	dataFrameWithStats.apply(pandas.to_numeric, errors='ignore')
 	print(dataFrameWithStats)
+
+def singleStatsSetup():
+	seasonList=["2015","2016","2017","2018"]
+	#get single game stats
+	singleStatFolder = (os.path.abspath(os.path.join(os.getcwd(), os.pardir)))
+	singleStatFolder = os.path.join(singleStatFolder,'Data Store/SingleStats/')
+	for season in seasonList:
+		with open(singleStatFolder+"/"+season+"/AdvStatPoints.csv",'wb') as statFile:
+			writer = csv.writer(statFile)
+			writer.writerow(['Name',"OWS","DWS","WS","WS/48","OBPM","DBPM","BPM","VORP"]) 
 
 def seasonIndexParse(soup):
 	#get season column Headers
@@ -243,14 +255,17 @@ def getPlayerStatsSeason(playerName,season):
 	playerTradStatsDF.to_csv(parentFolder+fileName+"_Stats_"+season+'.csv')
 
 	#get single game stats
+	singleStatFolder = (os.path.abspath(os.path.join(os.getcwd(), os.pardir)))
+	singleStatFolder = os.path.join(singleStatFolder,'Data Store/SingleStats/')
 	singleStatURL = basketballReferenceURL.format(params=playerHref)
 	singleStatHTML = urllib2.urlopen(singleStatURL)
 	soupObj = BeautifulSoup(singleStatHTML,"html.parser")
 	singleStats = getAdvancedSinglePoints(soupObj,playerName,season)
 	#write array to csv
-	with open(parentFolder+fileName+"_AdvStatPoints_"+season+'.csv','wb') as statFile:
+	###### ACTUALLY SHOULD PUT IN YEAR ######
+	with open(singleStatFolder+"/"+season+"/AdvStatPoints.csv",'a') as statFile:
 		writer = csv.writer(statFile)
-		writer.writerow(['Name',"OWS","DWS","WS","WS/48","OBPM","DBPM","BPM","VORP"])
+		#writer.writerow(['Name',"OWS","DWS","WS","WS/48","OBPM","DBPM","BPM","VORP"])
 		writer.writerow(singleStats)
 
 
