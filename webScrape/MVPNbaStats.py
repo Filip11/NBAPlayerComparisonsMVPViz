@@ -4,6 +4,7 @@ import urllib2
 import generatePlayerRef 
 import os
 import advStatCalc
+import csv
 
 seasonHrefDict = dict()
 mvpHrefDict = dict()
@@ -14,7 +15,7 @@ def main():
 	#Build dict with links for all NBA players
 	allPlayersHrefDict.update(generatePlayerRef.buildAllPlayersDict("https://www.basketball-reference.com/leagues/NBA_2017_per_game.html"))
 	#get Average MVPs and stats
-	averageMVPProcess()
+	#averageMVPProcess()
 
 	#Player season data to be retrieved
 	playersToStudy=[['LeBron James','2018'],['James Harden','2018'],['Giannis Antetokounmpo','2018'],['Kevin Durant','2018'],['Kyrie Irving','2018'],['Stephen Curry','2018'],['Russell Westbrook','2018'],['DeMar DeRozan','2018'],['Anthony Davis','2018'],
@@ -241,6 +242,18 @@ def getPlayerStatsSeason(playerName,season):
 	fileName=playerName.replace(" ", "_")
 	playerTradStatsDF.to_csv(parentFolder+fileName+"_Stats_"+season+'.csv')
 
+	#get single game stats
+	singleStatURL = basketballReferenceURL.format(params=playerHref)
+	singleStatHTML = urllib2.urlopen(singleStatURL)
+	soupObj = BeautifulSoup(singleStatHTML,"html.parser")
+	singleStats = getAdvancedSinglePoints(soupObj,playerName,season)
+	#write array to csv
+	with open(parentFolder+fileName+"_AdvStatPoints_"+season+'.csv','wb') as statFile:
+		writer = csv.writer(statFile)
+		writer.writerow(['Name',"OWS","DWS","WS","WS/48","OBPM","DBPM","BPM","VORP"])
+		writer.writerow(singleStats)
+
+
 #Return dataframe with players game played and stats in season specified from url
 def getPlayerGameStatsTrad(soupObj,advSoupObj,id):
 	#Columns - THIS ARRAY NEEDS TO MATCH UP WITH MASTER DF COLUMN HEADERS WHEN ADDING DATA
@@ -406,6 +419,34 @@ def getPlayerGameStatsAdvanced(tradDF,advSoupObj):
 					tmpGameData = []
 
 	return(pandas.DataFrame(gameData,columns=columnHeaders))
+
+def getAdvancedSinglePoints(soupObj,playerName,playedYear):
+	placeholders = soupObj.findAll('div',class_='placeholder')
+	
+	#Get advanced table
+	for item in placeholders:
+		comment=''.join(item.next_siblings)
+		soupComment = BeautifulSoup(comment,'html.parser')
+		advTablePerGame=soupComment.find('table',id="advanced")
+
+		if advTablePerGame:
+			advTablePerGame = (advTablePerGame.find('tr',id='advanced.'+playedYear))
+			break
+
+	statPointStats = []
+	#fetch and return single point stats
+	advStatPoints = advTablePerGame.findAll('td')
+	statsDesired = ["ows","dws","ws","ws_per_48","obpm","dbpm","bpm","vorp"]
+
+	for td in advStatPoints:
+		for statOfInterest in statsDesired:
+			if(td['data-stat'] == statOfInterest):
+				statPointStats.append(td.getText())
+
+	statPointStats.insert(0,playerName+playedYear)
+
+	return(statPointStats)		
+
 
 if __name__ == "__main__":
 	main()
