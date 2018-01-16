@@ -6,6 +6,17 @@ var possiblePlayersLists = ["#player2","#player3","#player4","#player5"]
 var possibleDiv = ["#2player","#3player","#4player","#5player"]
 $(document).ready(function() {
 
+	/* Tabs switching logic */
+	$('ul.tabs li').click(function(){
+		var tab_id = $(this).attr('data-tab');
+
+		$('ul.tabs li').removeClass('current');
+		$('.tab-content').removeClass('current');
+
+		$(this).addClass('current');
+		$("#"+tab_id).addClass('current');
+	})
+
 	$("#season, #season2, #season3, #season4, #season5").change(function () {
         var val = $(this).val();
         var player = "#player"
@@ -90,6 +101,7 @@ $(document).ready(function() {
 	    .attr("transform",
 	          "translate(" + margin.left + "," + margin.top + ")");
 
+
 	// gridlines in x axis function
 	function make_x_gridlines() {		
 	    return d3.axisBottom(x)
@@ -103,7 +115,6 @@ $(document).ready(function() {
 	}
 	$(".addPlayer").click(function (){
 		idx = parseInt($(this).attr('id'))
-		console.log(possibleDiv[idx])
 		$(possibleDiv[idx]).show();
 		seasonLists.push(possibleSeasonsLists[idx])
 		playerLists.push(possiblePlayersLists[idx])
@@ -112,9 +123,11 @@ $(document).ready(function() {
 	})
 	$(".removePlayer").click(function (){
 		idx = parseInt($(this).attr('id'))
+		console.log(idx)
 		$(possibleDiv[idx-1]).hide();
 		seasonLists.splice(idx,1)
 		playerLists.splice(idx,1)
+
 		filesToLoad.splice(idx+1,1)
 
 		drawGraph()
@@ -122,7 +135,6 @@ $(document).ready(function() {
 	})
 
 	function drawGraph(){
-
 		seasonYear = ($("#season")[0].value) //This is folder name
 		playerYear = ($("#player")[0].value) //This is file 
 		statUnderStudy = ($("#stat")[0].value) //Column in file
@@ -218,14 +230,14 @@ $(document).ready(function() {
 
 			// Loop through each symbol / key and draw line
 		    dataGroup.forEach(function(d,index) {
+		    	var newID =(d.key).replace(/\s/g, '');
+		    	console.log(newID)
 		        svg.append("path")
 	            .attr("class", "line")
-	            .attr("id",index)
+	            .attr("id",newID)
 	            .style("stroke", colors[index])
 	            .attr("d", valueline(d.values));
-
 		    });
-
 			// Add the X Axis
 			svg.append("g")
 			    .attr("transform", "translate(0," + height + ")")
@@ -241,6 +253,7 @@ $(document).ready(function() {
 			  	.attr("class", "yaxis")
 			  	.transition().duration(500)
 			    .call(d3.axisLeft(y).ticks(10,"s"))
+
 
 			svg.selectAll(".axisLabel").remove()
 
@@ -294,7 +307,8 @@ $(document).ready(function() {
               .attr('y', legendRectSize - legendSpacing)              // NEW
               .text(function(d) {
               	return d.key;
-               });
+               });            
+
               				svg.selectAll(".mouse-per-line").remove()
             			    //Add mouse over effects
             			    var mouseG = svg.append("g")
