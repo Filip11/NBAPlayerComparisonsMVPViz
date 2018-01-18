@@ -55,6 +55,7 @@ $(document).ready(function() {
 	})
 
 	drawGraph();
+	drawScatterplot();
 	
 	/* Change graph on drop down selection */
 	$("#season").on("change", drawGraph);
@@ -67,14 +68,6 @@ $(document).ready(function() {
 	possiblePlayersLists.forEach(function(player){
 		$(player).on("change", drawGraph);
 	})
-	/*	
-	$("#season2").on("change", drawGraph);
-	$("#player2").on("change", drawGraph);
-	$("#season3").on("change", drawGraph);
-	$("#player3").on("change", drawGraph);
-	$("#season4").on("change", drawGraph);
-	$("#player4").on("change", drawGraph);
-	*/
 
 	// set the dimensions and margins of the graph
 	var margin = {top: 20, right: 220, bottom: 50, left: 50},
@@ -85,6 +78,11 @@ $(document).ready(function() {
 	// set the ranges
 	var x = d3.scaleLinear().range([0, width]);
 	var y = d3.scaleLinear().range([height, 0]);
+
+	// Define the div for the tooltip
+	var div = d3.select("body").append("div")	
+	    .attr("class", "tooltip")				
+	    .style("opacity", 0);
 
 	// define the player line
 	var valueline = d3.line()
@@ -101,6 +99,12 @@ $(document).ready(function() {
 	    .attr("transform",
 	          "translate(" + margin.left + "," + margin.top + ")");
 
+	var scatterPlot = d3.select("#pointGraph").append("svg")
+	    .attr("width", width + margin.left + margin.right)
+	    .attr("height", height + margin.top + margin.bottom)
+	  	.append("g")
+	    .attr("transform",
+	          "translate(" + margin.left + "," + margin.top + ")");
 
 	// gridlines in x axis function
 	function make_x_gridlines() {		
@@ -411,6 +415,107 @@ $(document).ready(function() {
 		    	    .attr("stroke-dashoffset", 0);
 		    })
 			
+		})
+	
+	}
+
+	function drawScatterplot(){
+		var scatterPlotFiles = ["Data Store/MVPAverage/MVPAvgSingleAdvStats.csv","Data Store/SingleStats/2016/AdvStatPoints.csv"]
+		var color = d3.scaleOrdinal(d3.schemeCategory20);
+
+		//Create queue for loading multiple csv files
+		var queue = d3.queue();
+
+		// start loading
+		scatterPlotFiles.forEach(function(filename){
+			queue.defer(d3.csv,filename);
+		})
+		//Join load
+		queue.awaitAll(function(error,csvDataSets){
+			if(error) throw error;
+
+			//Array to hold merged csv data
+			var dataSetsToMerge = []
+			var mergedData = []
+
+			//Cast string to int for data points
+			csvDataSets.forEach(function(csvDataSet){
+
+				csvDataSet.forEach(function(d) {
+			    	d.x_stat = parseFloat(d.DWS);
+			      	d.y_stat = parseFloat(d.OWS);
+		  		});
+			})
+			//Get an array of all data set to use
+			csvDataSets.forEach(function(set){
+				dataSetsToMerge.push(set)
+			})
+			//Merge the CSV data 
+			mergedData = (d3.merge(dataSetsToMerge));
+			//Create a d3 nest based on Name key in dataset
+			var dataGroup = d3.nest()
+				.key(function(d){
+					return d.Name;
+				})
+				.entries(mergedData)		  		
+
+			x.domain(d3.extent(mergedData, function(d) { return d.x_stat; }));	
+			y.domain(d3.extent(mergedData, function(d) { return d.y_stat; }));	
+
+
+			// Add the X Axis
+			scatterPlot.append("g")
+			    .attr("transform", "translate(0," + height + ")")
+			    .attr("class", "xaxis")
+			    .transition().duration(500)
+			    .call(d3.axisBottom(x).ticks(10, "s"));
+			
+
+			scatterPlot.selectAll(".yaxis").remove()
+
+			// Add the Y Axis
+			scatterPlot.append("g")
+			  	.attr("class", "yaxis")
+			  	.transition().duration(500)
+			    .call(d3.axisLeft(y).ticks(10,"s"))
+
+
+			scatterPlot.selectAll(".axisLabel").remove()
+			scatterPlot.selectAll(".circle")
+			  .data(mergedData)
+			  .enter().append("circle")
+			    .attr("class", "circle")
+			    .attr("r", function(d,i) {
+			     if(d.Name == "Average MVP"){
+			     	return 10
+			     }else{return 8}
+			 	})
+			    .attr("cx", function(d) { return x(d.x_stat); })
+			    .attr("cy", function(d) { return y(d.y_stat); })
+			    .attr("fill", function(d,i) {
+			     if(d.Name == "Average MVP"){
+			     	return "#FFD700"
+			     }
+			     return color(i); 
+			 	} )
+			 	.style('stroke', function(d,i) {
+			     if(d.Name == "Average MVP"){
+			     	return "yellow"
+			     }} )
+			    .on("mouseover", function(d) {	
+			                div.transition()		
+			                    .duration(200)		
+			                    .style("opacity", .9);		
+			                div	.html(d.Name+ "<br/>"+"OWS: "+(d.y_stat) + "<br/>"  + d.x_stat)	
+			                    .style("left", (d3.event.pageX) + "px")		
+			                    .style("top", (d3.event.pageY - 28) + "px");	
+			                })					
+			            .on("mouseout", function(d) {		
+			                div.transition()		
+			                    .duration(500)		
+			                    .style("opacity", 0);	
+			            });
+
 		})
 
 	}

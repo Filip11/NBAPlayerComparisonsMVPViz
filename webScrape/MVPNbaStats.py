@@ -18,8 +18,7 @@ def main():
 	#get Average MVPs and stats
 	averageMVPProcess()
 
-	singleStatsSetup()
-
+	#singleStatsSetup()
 	#Player season data to be retrieved
 	playersToStudy=[['LeBron James','2018'],['James Harden','2018'],['Giannis Antetokounmpo','2018'],['Kevin Durant','2018'],['Kyrie Irving','2018'],['Stephen Curry','2018'],['Russell Westbrook','2018'],['DeMar DeRozan','2018'],['Anthony Davis','2018'],
 	['Kyle Lowry','2018'],['Karl-Anthony Towns','2018'],['Nikola Jokic','2018'],
@@ -28,11 +27,14 @@ def main():
 	['LeBron James','2016'],['Russell Westbrook','2016'],['Kevin Durant','2016'],['Chris Paul','2016'],['Draymond Green','2016'],['Damian Lillard','2016'],['James Harden','2016'],
 	['Kyle Lowry','2016'],['Stephen Curry','2015'],['James Harden','2015'],['LeBron James','2015'],['Russell Westbrook','2015'],['Anthony Davis','2015'],['Chris Paul','2015'],
 	['LaMarcus Aldridge','2015'],['Marc Gasol','2015'],['Blake Griffin','2015'],['Tim Duncan','2015'],['Kawhi Leonard','2015'],['Klay Thompson','2015']]
+	
+	latestPlayersOnly = [['LeBron James','2018'],['James Harden','2018'],['Giannis Antetokounmpo','2018'],['Kevin Durant','2018'],['Kyrie Irving','2018'],['Stephen Curry','2018'],['Russell Westbrook','2018'],['DeMar DeRozan','2018'],['Anthony Davis','2018'],
+	['Kyle Lowry','2018'],['Karl-Anthony Towns','2018'],['Nikola Jokic','2018']]
 	for playerSeason in playersToStudy:
 		player=playerSeason[0]
 		season=playerSeason[1]
 		#Get player stats per game
-		playerTradDF = getPlayerStatsSeason(player,season) #uncomment to fill out our players files
+		#playerTradDF = getPlayerStatsSeason(player,season) #uncomment to fill out our players files
 		
 
 def averageMVPProcess():
@@ -181,7 +183,7 @@ def getMVPSeasonStats(masterDataFrame):
 		mvpPerGameDF = pandas.concat([mvpGameStatsDF,mvpPerGameDF],axis=1)
 
 		#Single stats
-		singleColumnHeaders = ["Name","OWS_S","DWS_S","WS_S","WS/48_S","OBPM_S","DPBM_S","BPM_S","VORP_S"]
+		singleColumnHeaders = ["Name","OWS","DWS","WS","WS/48","OBPM","DBPM","BPM","VORP"]
 		#Get list of adv stats and append to DF
 		singlePointStats = [getAdvancedSinglePoints(soupObj,playerUnderStudy,playedYear)]
 		singleStatsDF = singleStatsDF.append(pandas.DataFrame(singlePointStats,columns=singleColumnHeaders),ignore_index=True)
@@ -251,6 +253,7 @@ def getMeanColumns(statsList,statsDF):
 			continue
 		else:
 			statsDF[stat] = statsDF[stat].mean()
+			statsDF[stat] = statsDF[stat].apply(lambda x: round(x,3))
 	return(statsDF)
 
 def writeMVPAverageStatsToFile(columnHeaders,avgDF,fileName):
