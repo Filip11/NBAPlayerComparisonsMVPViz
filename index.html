@@ -81,6 +81,9 @@
 	.statSelect{
 		padding-left:440px;
 	}
+	.statSelectAdv{
+		padding-left: 678px;
+	}
 	.About{
 		margin-left: 60px;
 	}
@@ -97,33 +100,63 @@
 		font-size: 30px;
 	}
 	label { display: block; }
-	ul.tabs{
-		margin: 0px;
-		padding: 0px;
-		list-style: none;
+	.tabs {
+	    width:100%;
+	    display:inline-block;
 	}
-	ul.tabs li{
-		background: none;
-		color: #222;
-		display: inline-block;
-		padding: 0px 10px;
-		cursor: pointer;
-	}
-
-	ul.tabs li.current{
-		background: #ededed;
-		color: #222;
-	}
-
-	.tab-content{
-		display: none;
-		background: #ededed;
-		padding: 5px;
-	}
-
-	.tab-content.current{
-		display: inherit;
-	}
+	 
+    /*----- Tab Links -----*/
+    /* Clearfix */
+    .tab-links:after {
+        display:block;
+        clear:both;
+        content:'';
+    }
+ 
+    .tab-links li {
+        /*margin:0px 5px;*/
+        float:left;
+        list-style:none;
+    }
+ 
+        .tab-links a {
+            padding:9px 15px;
+            display:inline-block;
+            border-radius:3px 3px 0px 0px;
+            background:#7FB5DA;
+            font-size:16px;
+            font-weight:600;
+            color:#4c4c4c;
+            transition:all linear 0.15s;
+        }
+ 
+        .tab-links a:hover {
+            background:#a7cce5;
+            text-decoration:none;
+        }
+ 
+    li.active a, li.active a:hover {
+        background:GhostWhite;
+        color:#4c4c4c;
+        /*border-width: 1px;*/
+    }
+ 
+    /*----- Content of Tabs -----*/
+    .tab-content {
+        padding:15px;
+        border-radius:3px;
+        box-shadow:-1px 1px 1px rgba(0,0,0,0.15);
+        background:#fff;
+    }
+ 
+        .tab {
+            display:none;
+        }
+ 
+        .tab.active {
+            display:block;
+            background:#fff;
+        }
 
 	</style>
 	<body>
@@ -139,117 +172,148 @@
 		  NBA MVPs. Additional players can be added to the graph for comparison using the Add Player/Remove Player controls.
 			</div>
 		</div>
+		<div class="tabs">
+		    <ul class="tab-links">
+		        <li class="active"><a href="#tab1">Game Stats</a></li>
+		        <li><a href="#tab2">Adv Season Stats</a></li>
 
-		<div class="controls">
-			<form>
-			<label for="season">Season</label>
-			<select id="season" class="midAlign">
-				<!--<option selected disabled hidden>-- Select Season --</option>-->
-				<option value="2018">2017-2018</option>
-				<option value="2017" selected='selected'>2016-2017</option>
-				<option value="2016">2015-2016</option>
-				<option value="2015">2014-2015</option>
-			</select>
-			</form>
-				<form>
-				<label for="player">Player</label>
+		    </ul>
+		    <div class="tab-content">
+		        <div id="tab1" class="tab active">
+	            	<div class="controls">
+	            		<form>
+	            		<label for="season">Season</label>
+	            		<select id="season" class="midAlign">
+	            			<!--<option selected disabled hidden>-- Select Season --</option>-->
+	            			<option value="2018">2017-2018</option>
+	            			<option value="2017" selected='selected'>2016-2017</option>
+	            			<option value="2016">2015-2016</option>
+	            			<option value="2015">2014-2015</option>
+	            		</select>
+	            		</form>
+	            			<form>
+	            			<label for="player">Player</label>
 
-				<select id="player" class="midAlign">
-					<option value='Russell_Westbrook_Stats_2017'>Russell Westbrook</option>
-					<option value='James_Harden_Stats_2017'>James Harden</option>
-					<option value='Kawhi_Leonard_Stats_2017'>Kawhi Leonard</option>
-					<option value='LeBron_James_Stats_2017'>LeBron James</option>
-					<option value='Isaiah_Thomas_Stats_2017'>Isaiah Thomas</option>
-					<option value='Stephen_Curry_Stats_2017'>Stephen Curry</option>
-					<option value='John_Wall_Stats_2017'>John Wall</option>
-					<option value='Giannis_Antetokounmpo_Stats_2017'>Giannis Antetokounmpo</option>
-					<option value='Anthony_Davis_Stats_2017'>Anthony Davis</option>
-					<option value='Kevin_Durant_Stats_2017'>Kevin Durant</option>
-					<option value='DeMar_DeRozan_Stats_2017'>DeMar DeRozan</option>
-					<!--<option value=""></option>-->
-				</select>
-				<a class="addPlayer" id = "0 "><img src="icons/green_plus.png"></img> Add Player </a>				
-				</form>
+	            			<select id="player" class="midAlign">
+	            				<option value='Russell_Westbrook_Stats_2017'>Russell Westbrook</option>
+	            				<option value='James_Harden_Stats_2017'>James Harden</option>
+	            				<option value='Kawhi_Leonard_Stats_2017'>Kawhi Leonard</option>
+	            				<option value='LeBron_James_Stats_2017'>LeBron James</option>
+	            				<option value='Isaiah_Thomas_Stats_2017'>Isaiah Thomas</option>
+	            				<option value='Stephen_Curry_Stats_2017'>Stephen Curry</option>
+	            				<option value='John_Wall_Stats_2017'>John Wall</option>
+	            				<option value='Giannis_Antetokounmpo_Stats_2017'>Giannis Antetokounmpo</option>
+	            				<option value='Anthony_Davis_Stats_2017'>Anthony Davis</option>
+	            				<option value='Kevin_Durant_Stats_2017'>Kevin Durant</option>
+	            				<option value='DeMar_DeRozan_Stats_2017'>DeMar DeRozan</option>
+	            				<!--<option value=""></option>-->
+	            			</select>
+	            			<a class="addPlayer" id = "0 "><img src="icons/green_plus.png"></img> Add Player </a>				
+	            			</form>
+	            			
+	            		<div class="statSelect">
+	            		<form>
+	            		<label for="stat">Stat</label>
+	            		<select id = "stat" class ="midAlign">
+	            			<option value="PTS_G">PPG</option>
+	            			<option value="AST_G">AST</option>
+	            			<option value="FG_G">FGM</option>
+	            			<option value="FGA_G">FGA</option>
+	            			<option value="FG_PCT">FG%</option>
+	            			<option value= "RBD_G">RBD</option>
+	            			<option value= "STL_G">STL</option>				
+	            			<option value= "MP_G">MP</option>
+	            			<option value= "3FG_G">3FG</option>
+	            			<option value= "3FGA_G">3FGA</option>
+	            			<option value= "3FG_PCT">3FG%</option>
+	            			<option value= "eFG_PCT">eFG%</option>
+	            			<option value= "TS_G">TS%</option>
+	            			<option value= "FT_G">FTM</option>
+	            			<option value= "FTA_G">FTA</option>
+	            			<option value= "FT_PCT">FT%</option>
+	            			<option value= "ASTPCT_G">AST%</option>
+	            			<option value= "TOV_PCT_G">TOV%</option>
+	            			<option value= "USG_PCT_G">USG%</option>
+	            			<option value= "OFRTG_G">ORTG</option>
+	            			<option value= "DFRTG_G">DRTG</option>
+
+	            		</select>
+	            		
+	            		</form>
+		           		</div>
+		            </div>
+		            	<div id="2player" class="controls" style="display: none;">
+		            		<select id = "season2" class ="midAlign"></select>
+		            		<select id = "player2" class ="midAlign"></select>
+		            		<a class="addPlayer" id = "1 "> <img src="icons/green_plus.png"></img> Add Player </a>
+		            		<a class="removePlayer"id="1"><img src="icons/red_remove.png"></img> Remove Player  </a>
+		            	</div>
+		            	<div id="3player" class="controls" style="display: none;">
+		            		<select id = "season3" class ="midAlign"></select>
+		            		<select id = "player3" class ="midAlign"></select>
+		            		<a class="addPlayer" id = "2 "><img src="icons/green_plus.png"></img> Add Player </a>
+		            		<a class="removePlayer"id="2"><img src="icons/red_remove.png"></img> Remove Player  </a>
+		            	</div>
+		            	<div id="4player" class="controls" style="display: none;">
+		            		<select id = "season4" class ="midAlign"></select>
+		            		<select id = "player4" class ="midAlign"></select>
+		            		<a class="addPlayer" id = "3 "><img src="icons/green_plus.png"></img> Add Player </a>
+		            		<a class="removePlayer"id="3"><img src="icons/red_remove.png"></img> Remove Player  </a>
+		            	</div>
+		            	<div id="5player" class="controls" style="display: none;">
+		            		<select id = "season5" class ="midAlign"></select>
+		            		<select id = "player5" class ="midAlign"></select>
+		            		<a class="removePlayer"id="4"><img src="icons/red_remove.png"></img> Remove Player  </a>
+		            	</div>
+		            	
+		            	
+
+		            	<div class="container-fluid">
+		            		<svg width="860" height="5"></svg>
+		            		<div id="comparisonGraph"></div>
+		            	</div>
+
+		        </div>
+		 
+		        <div id="tab2" class="tab">
+		            <div class="controls">
+		            	<form>
+		            	<label for="seasonAdv">Season</label>
+		            	<select id="seasonAdv" class="midAlign">
+		            		<!--<option selected disabled hidden>-- Select Season --</option>-->
+		            		<option value="2018" selected='selected'>2017-2018</option>
+		            		<option value="2017">2016-2017</option>
+		            		<option value="2016">2015-2016</option>
+		            		<option value="2015">2014-2015</option>
+		            	</select>
+		            	</form>
+		            	<div class="statSelectAdv">
+		            		<form>
+		            			<label for="statAdv">Stat</label>
+		            			<select id = "statAdv" class ="midAlign">
+		            				<option value= "DWS_OWS">DWS vs OWS</option>
+		            				<option value= "WS_WS/48">WS vs WS/48</option>
+		            				<option value= "DBPM_OBPM">DBPM vs OBPM</option>
+		            				<option value= "BPM_VORP">BPM vs VORP</option>
+
+		            			</select>
+		            			
+		            		</form>
+		            	</div>
+
+		            </div>
+		            <div class="container-fluid">
+						<svg width="860" height="5"></svg>
+						<div id="pointGraph"></div>
+					</div>
+
+		        </div>
+		 
+		    </div>
+		</div>
+
+
 				
-			<div class="statSelect">
-			<form>
-			<label for="stat">Stat</label>
-			<select id = "stat" class ="midAlign">
-				<option value="PTS_G">PPG</option>
-				<option value="AST_G">AST</option>
-				<option value="FG_G">FGM</option>
-				<option value="FGA_G">FGA</option>
-				<option value="FG_PCT">FG%</option>
-				<option value= "RBD_G">RBD</option>
-				<option value= "STL_G">STL</option>				
-				<option value= "MP_G">MP</option>
-				<option value= "3FG_G">3FG</option>
-				<option value= "3FGA_G">3FGA</option>
-				<option value= "3FG_PCT">3FG%</option>
-				<option value= "eFG_PCT">eFG%</option>
-				<option value= "TS_G">TS%</option>
-				<option value= "FT_G">FTM</option>
-				<option value= "FTA_G">FTA</option>
-				<option value= "FT_PCT">FT%</option>
-				<option value= "ASTPCT_G">AST%</option>
-				<option value= "TOV_PCT_G">TOV%</option>
-				<option value= "USG_PCT_G">USG%</option>
-				<option value= "OFRTG_G">ORTG</option>
-				<option value= "DFRTG_G">DRTG</option>
-
-			</select>
-			
-		</form>
-	</div>
-		</div>
-		<div id="2player" class="controls" style="display: none;">
-			<select id = "season2" class ="midAlign"></select>
-			<select id = "player2" class ="midAlign"></select>
-			<a class="addPlayer" id = "1 "> <img src="icons/green_plus.png"></img> Add Player </a>
-			<a class="removePlayer"id="1"><img src="icons/red_remove.png"></img> Remove Player  </a>
-		</div>
-		<div id="3player" class="controls" style="display: none;">
-			<select id = "season3" class ="midAlign"></select>
-			<select id = "player3" class ="midAlign"></select>
-			<a class="addPlayer" id = "2 "><img src="icons/green_plus.png"></img> Add Player </a>
-			<a class="removePlayer"id="2"><img src="icons/red_remove.png"></img> Remove Player  </a>
-		</div>
-		<div id="4player" class="controls" style="display: none;">
-			<select id = "season4" class ="midAlign"></select>
-			<select id = "player4" class ="midAlign"></select>
-			<a class="addPlayer" id = "3 "><img src="icons/green_plus.png"></img> Add Player </a>
-			<a class="removePlayer"id="3"><img src="icons/red_remove.png"></img> Remove Player  </a>
-		</div>
-		<div id="5player" class="controls" style="display: none;">
-			<select id = "season5" class ="midAlign"></select>
-			<select id = "player5" class ="midAlign"></select>
-			<a class="removePlayer"id="4"><img src="icons/red_remove.png"></img> Remove Player  </a>
-		</div>
-		<!--
-		<div class="container">
-
-			<ul class="tabs">
-				<li class="tab-link current" data-tab="tab-1">Tab One</li>
-				<li class="tab-link" data-tab="tab-2">Tab Two</li>
-
-			</ul>
-			<div id="tab-1" class="tab-content">
-				Yo1.
-			</div>
-			<div id="tab-2" class="tab-content">
-				Yo2.
-			</div>
-		</div>< 
-		TABS container -->	
-
-		<div class="container-fluid">
-			<svg width="860" height="5"></svg>
-			<div id="comparisonGraph"></div>
-		</div>
-		<div class="container-fluid">
-			<svg width="860" height="5"></svg>
-			<div id="pointGraph"></div>
-		</div>
 
 
 

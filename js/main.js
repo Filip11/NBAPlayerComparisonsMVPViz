@@ -6,7 +6,21 @@ var possiblePlayersLists = ["#player2","#player3","#player4","#player5"]
 var possibleDiv = ["#2player","#3player","#4player","#5player"]
 $(document).ready(function() {
 
+	jQuery('.tabs .tab-links a').on('click', function(e)  {
+	        var currentAttrValue = jQuery(this).attr('href');
+	 
+	        // Show/Hide Tabs
+	        jQuery('.tabs ' + currentAttrValue).fadeIn(500).siblings().hide();
+	 
+	        // Change/remove current tab to active
+	        jQuery(this).parent('li').addClass('active').siblings().removeClass('active');
+	 
+	        e.preventDefault();
+	    });
+
 	/* Tabs switching logic */
+	/*
+	$('ul.tabs li').tabs({ active: 1 });
 	$('ul.tabs li').click(function(){
 		var tab_id = $(this).attr('data-tab');
 
@@ -16,6 +30,7 @@ $(document).ready(function() {
 		$(this).addClass('current');
 		$("#"+tab_id).addClass('current');
 	})
+	*/
 
 	$("#season, #season2, #season3, #season4, #season5").change(function () {
         var val = $(this).val();
@@ -68,6 +83,9 @@ $(document).ready(function() {
 	possiblePlayersLists.forEach(function(player){
 		$(player).on("change", drawGraph);
 	})
+
+	$("#seasonAdv").on("change", drawScatterplot);
+	$("#statAdv").on("change", drawScatterplot);
 
 	// set the dimensions and margins of the graph
 	var margin = {top: 20, right: 220, bottom: 50, left: 50},
@@ -420,8 +438,16 @@ $(document).ready(function() {
 	}
 
 	function drawScatterplot(){
-		var scatterPlotFiles = ["Data Store/MVPAverage/MVPAvgSingleAdvStats.csv","Data Store/SingleStats/2016/AdvStatPoints.csv"]
+		seasonYearAdv = ($("#seasonAdv")[0].value) //This is folder name
+		statUnderStudyAdv = ($("#statAdv")[0].value) 
+
+		console.log(statUnderStudyAdv)
+		xStatLabel = (statUnderStudyAdv.substring(0,statUnderStudyAdv.indexOf("_")))
+		yStatLabel = (statUnderStudyAdv.substring(statUnderStudyAdv.indexOf("_")+1))
+
+		var scatterPlotFiles = ["Data Store/MVPAverage/MVPAvgSingleAdvStats.csv","Data Store/SingleStats/"+seasonYearAdv+"/AdvStatPoints.csv"]
 		var color = d3.scaleOrdinal(d3.schemeCategory20);
+
 
 		//Create queue for loading multiple csv files
 		var queue = d3.queue();
@@ -442,8 +468,8 @@ $(document).ready(function() {
 			csvDataSets.forEach(function(csvDataSet){
 
 				csvDataSet.forEach(function(d) {
-			    	d.x_stat = parseFloat(d.DWS);
-			      	d.y_stat = parseFloat(d.OWS);
+			    	d.x_stat = parseFloat(d[xStatLabel]);
+			      	d.y_stat = parseFloat(d[yStatLabel]);
 		  		});
 			})
 			//Get an array of all data set to use
@@ -459,10 +485,33 @@ $(document).ready(function() {
 				})
 				.entries(mergedData)		  		
 
+
 			x.domain(d3.extent(mergedData, function(d) { return d.x_stat; }));	
 			y.domain(d3.extent(mergedData, function(d) { return d.y_stat; }));	
 
+			//Refresh grid
+			scatterPlot.selectAll(".grid").remove()
 
+			// add the X gridlines
+			scatterPlot.append("g")			
+				.attr("class", "grid")
+				.attr("transform", "translate(0," + height + ")")
+				.call(make_x_gridlines()
+					.tickSize(-height)
+					.tickFormat("")
+				)
+
+			// add the Y gridlines
+			scatterPlot.append("g")			
+				.attr("class", "grid")
+				.call(make_y_gridlines()
+					.tickSize(-width)
+					.tickFormat("")
+			)
+
+			scatterPlot.selectAll(".circle").remove()
+			
+			scatterPlot.selectAll(".xaxis").remove()
 			// Add the X Axis
 			scatterPlot.append("g")
 			    .attr("transform", "translate(0," + height + ")")
@@ -479,12 +528,34 @@ $(document).ready(function() {
 			  	.transition().duration(500)
 			    .call(d3.axisLeft(y).ticks(10,"s"))
 
-
+			
 			scatterPlot.selectAll(".axisLabel").remove()
-			scatterPlot.selectAll(".circle")
+
+			//Add Text for Y axis
+			scatterPlot.append("text")
+			    .attr("transform", "rotate(-90)")
+			    .attr("class","axisLabel")
+			    .attr("y", 0 - margin.left)
+			    .attr("x",0 - (height / 2))
+			    .attr("dy", "1em")
+			    .style("text-anchor", "middle")
+			    .text(yStatLabel);     
+
+			// text label for the x axis
+			scatterPlot.append("text")             
+		      	.attr("transform",
+		        	"translate(" + (width/2) + " ," + 
+		                (height + margin.top + 20) + ")")
+		      	.attr("class","axisLabel")
+		      	.style("text-anchor", "middle")
+		      	.text(xStatLabel);
+
+			var dot = scatterPlot.selectAll(".circle")
 			  .data(mergedData)
 			  .enter().append("circle")
 			    .attr("class", "circle")
+        		.transition()
+        		.duration(800)
 			    .attr("r", function(d,i) {
 			     if(d.Name == "Average MVP"){
 			     	return 10
@@ -492,6 +563,7 @@ $(document).ready(function() {
 			 	})
 			    .attr("cx", function(d) { return x(d.x_stat); })
 			    .attr("cy", function(d) { return y(d.y_stat); })
+
 			    .attr("fill", function(d,i) {
 			     if(d.Name == "Average MVP"){
 			     	return "#FFD700"
@@ -502,11 +574,13 @@ $(document).ready(function() {
 			     if(d.Name == "Average MVP"){
 			     	return "yellow"
 			     }} )
-			    .on("mouseover", function(d) {	
+
+			 	scatterPlot.selectAll(".circle")
+			    	.on("mouseover", function(d) {	
 			                div.transition()		
 			                    .duration(200)		
 			                    .style("opacity", .9);		
-			                div	.html(d.Name+ "<br/>"+"OWS: "+(d.y_stat) + "<br/>"  + d.x_stat)	
+			                div	.html(d.Name+ "<br/>"+yStatLabel+": "+(d.y_stat) + "<br/>"+xStatLabel+": " + d.x_stat)	
 			                    .style("left", (d3.event.pageX) + "px")		
 			                    .style("top", (d3.event.pageY - 28) + "px");	
 			                })					
@@ -516,7 +590,11 @@ $(document).ready(function() {
 			                    .style("opacity", 0);	
 			            });
 
-		})
+			    //dot.transition()
+			    //.duration(1000)
 
+
+		})
+		
 	}
 })
