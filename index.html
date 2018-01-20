@@ -122,7 +122,7 @@
         .tab-links a {
             padding:9px 15px;
             display:inline-block;
-            border-radius:3px 3px 0px 0px;
+            border-radius: 15px 15px 0px 0px;
             background:#7FB5DA;
             font-size:16px;
             font-weight:600;
@@ -136,9 +136,9 @@
         }
  
     li.active a, li.active a:hover {
-        background:GhostWhite;
+        background:white;
         color:#4c4c4c;
-        /*border-width: 1px;*/
+        border-radius: 15px 15px 0px 0px;
     }
  
     /*----- Content of Tabs -----*/
@@ -291,6 +291,7 @@
 		            		<form>
 		            			<label for="statAdv">Stat</label>
 		            			<select id = "statAdv" class ="midAlign">
+		            				<option value = "VORP_PER">VORP vs PER</option>
 		            				<option value= "DWS_OWS">DWS vs OWS</option>
 		            				<option value= "WS_WS/48">WS vs WS/48</option>
 		            				<option value= "DBPM_OBPM">DBPM vs OBPM</option>

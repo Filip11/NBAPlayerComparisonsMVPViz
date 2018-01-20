@@ -18,7 +18,7 @@ def main():
 	#get Average MVPs and stats
 	averageMVPProcess()
 
-	#singleStatsSetup()
+	singleStatsSetup()
 	#Player season data to be retrieved
 	playersToStudy=[['LeBron James','2018'],['James Harden','2018'],['Giannis Antetokounmpo','2018'],['Kevin Durant','2018'],['Kyrie Irving','2018'],['Stephen Curry','2018'],['Russell Westbrook','2018'],['DeMar DeRozan','2018'],['Anthony Davis','2018'],
 	['Kyle Lowry','2018'],['Karl-Anthony Towns','2018'],['Nikola Jokic','2018'],
@@ -34,7 +34,7 @@ def main():
 		player=playerSeason[0]
 		season=playerSeason[1]
 		#Get player stats per game
-		#playerTradDF = getPlayerStatsSeason(player,season) #uncomment to fill out our players files
+		playerTradDF = getPlayerStatsSeason(player,season) #uncomment to fill out our players files
 		
 
 def averageMVPProcess():
@@ -58,7 +58,7 @@ def singleStatsSetup():
 	for season in seasonList:
 		with open(singleStatFolder+"/"+season+"/AdvStatPoints.csv",'wb') as statFile:
 			writer = csv.writer(statFile)
-			writer.writerow(['Name',"OWS","DWS","WS","WS/48","OBPM","DBPM","BPM","VORP"]) 
+			writer.writerow(['Name',"PER","OWS","DWS","WS","WS/48","OBPM","DBPM","BPM","VORP"]) 
 
 def seasonIndexParse(soup):
 	#get season column Headers
@@ -183,7 +183,7 @@ def getMVPSeasonStats(masterDataFrame):
 		mvpPerGameDF = pandas.concat([mvpGameStatsDF,mvpPerGameDF],axis=1)
 
 		#Single stats
-		singleColumnHeaders = ["Name","OWS","DWS","WS","WS/48","OBPM","DBPM","BPM","VORP"]
+		singleColumnHeaders = ["Name","PER","OWS","DWS","WS","WS/48","OBPM","DBPM","BPM","VORP"]
 		#Get list of adv stats and append to DF
 		singlePointStats = [getAdvancedSinglePoints(soupObj,playerUnderStudy,playedYear)]
 		singleStatsDF = singleStatsDF.append(pandas.DataFrame(singlePointStats,columns=singleColumnHeaders),ignore_index=True)
@@ -478,7 +478,7 @@ def getAdvancedSinglePoints(soupObj,playerName,playedYear):
 	statPointStats = []
 	#fetch and return single point stats
 	advStatPoints = advTablePerGame.findAll('td')
-	statsDesired = ["ows","dws","ws","ws_per_48","obpm","dbpm","bpm","vorp"]
+	statsDesired = ["per","ows","dws","ws","ws_per_48","obpm","dbpm","bpm","vorp"]
 
 	for td in advStatPoints:
 		for statOfInterest in statsDesired:
