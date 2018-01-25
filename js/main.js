@@ -1,9 +1,10 @@
-var filesToLoad = ["Data Store/MVPAverage/MVPAvgStats.csv"]//,"Data Store/"+seasonYear+'/'+playerYear+".csv"]
+//var filesToLoad = ["Data Store/MVPAverage/MVPAvgStats.csv"]//,"Data Store/"+seasonYear+'/'+playerYear+".csv"]
 var seasonLists = ["#season"]
 var playerLists = ["#player"]
-var possibleSeasonsLists = ["#season2","#season3","#season4","#season5"]
-var possiblePlayersLists = ["#player2","#player3","#player4","#player5"]
-var possibleDiv = ["#2player","#3player","#4player","#5player"]
+var possibleSeasonsLists = ["#season1","#season2","#season3","#season4"]
+var possiblePlayersLists = ["#player1","#player2","#player3","#player4"]
+var possibleDiv = ["#1player","#2player","#3player","#4player"]
+
 $(document).ready(function() {
 
 	jQuery('.tabs .tab-links a').on('click', function(e)  {
@@ -18,24 +19,38 @@ $(document).ready(function() {
 	        e.preventDefault();
 	    });
 
-	/* Tabs switching logic */
-	/*
-	$('ul.tabs li').tabs({ active: 1 });
-	$('ul.tabs li').click(function(){
-		var tab_id = $(this).attr('data-tab');
-
-		$('ul.tabs li').removeClass('current');
-		$('.tab-content').removeClass('current');
-
-		$(this).addClass('current');
-		$("#"+tab_id).addClass('current');
-	})
-	*/
-
-	$("#season, #season2, #season3, #season4, #season5").change(function () {
+	/* Handle Disabling of dropdown menu logic */
+	$(function() {
+        $("#season1").change(function() {
+            if ($(this).val() != "null") {
+                $("#player1").prop("disabled", false);
+            }
+        });
+         $("#season2").change(function() {
+            if ($(this).val() != "null") {
+                $("#player2").prop("disabled", false);
+            }
+        });
+          $("#season3").change(function() {
+            if ($(this).val() != "null") {
+                $("#player3").prop("disabled", false);
+            }
+        });
+           $("#season4").change(function() {
+            if ($(this).val() != "null") {
+                $("#player4").prop("disabled", false);
+            }
+        });
+    });
+	
+	/* Case statement to dynamically alter player drop down values */
+	$("#season, #season1, #season2, #season3, #season4").change(function () {
         var val = $(this).val();
         var player = "#player"
         switch(this.id) {
+            case "season1":
+                player = "#player1"
+                break;
             case "season2":
                 player = "#player2"
                 break;
@@ -44,9 +59,6 @@ $(document).ready(function() {
                 break;
             case "season4":
                 player = "#player4"
-                break;
-            case "season5":
-                player = "#player5"
                 break;                  
             default:
                 player = "#player"
@@ -64,9 +76,13 @@ $(document).ready(function() {
 	/* Copy select options from first drop down to all clones */
 	possibleSeasonsLists.forEach(function(season){
 		$('#season option').clone().appendTo(season);
+		//$(season+' option:selected').removeAttr('selected');
+		$(season).append('<option selected disabled hidden value=null>-- Select Season --</option>')
 	})
 	possiblePlayersLists.forEach(function(player){
 		$('#player option').clone().appendTo(player);
+		//$(player+' option:selected').removeAttr('selected');
+		$(player).append('<option selected disabled hidden value=null>-- Select Season --</option>')
 	})
 
 	drawGraph();
@@ -136,30 +152,61 @@ $(document).ready(function() {
 	        .ticks(10)
 	}
 	$(".addPlayer").click(function (){
-		idx = parseInt($(this).attr('id'))
+		idx = parseInt($(this).attr('id')[0])
+		console.log(idx)
 		$(possibleDiv[idx]).show();
+
 		seasonLists.push(possibleSeasonsLists[idx])
 		playerLists.push(possiblePlayersLists[idx])
-
+		//$("#"+idx+"_add").hide();
 		drawGraph()
 	})
 	$(".removePlayer").click(function (){
 		idx = parseInt($(this).attr('id'))
-		console.log(idx)
-		$(possibleDiv[idx-1]).hide();
+		//console.log(idx)
+		seasonToRemove = ($("#season"+idx)[0].value)
+		playerToRemove = ($("#player"+idx)[0].value)
+
+		$('#player'+idx).append('<option selected disabled hidden value=null>-- Select Season --</option>')
+
+		$('#player'+idx).prop("disabled", true);
+		$('#season'+idx+' option').prop('selected', function() {
+		       return this.defaultSelected;
+		});
+		//$(possibleDiv[idx-1]).hide();
 		seasonLists.splice(idx,1)
 		playerLists.splice(idx,1)
 
-		filesToLoad.splice(idx+1,1)
+		lineID = (playerToRemove.replace("_Stats_",""))
+		lineID = lineID.replace("_","")
+
+		//svg.selectAll("#"+lineID).remove()
 
 		drawGraph()
 
 	})
 
 	function drawGraph(){
-		seasonYear = ($("#season")[0].value) //This is folder name
+		seasonYear = ($("#season1")[0].value) //This is folder name
 		playerYear = ($("#player")[0].value) //This is file 
 		statUnderStudy = ($("#stat")[0].value) //Column in file
+		var filesToLoad = ["Data Store/MVPAverage/MVPAvgStats.csv"]
+		var selectionDict = {
+			"player":[($("#season")[0].value),($("#player")[0].value)],
+			"1player":[($("#season1")[0].value),($("#player1")[0].value)],
+			"2player":[($("#season2")[0].value),($("#player2")[0].value)],
+			"3player":[($("#season3")[0].value),($("#player3")[0].value)],
+			"4player":[($("#season4")[0].value),($("#player4")[0].value)]
+		}
+		for (var key in selectionDict){
+			if (selectionDict[key][0] != "null" && selectionDict[key][1] != "null"){
+				if ($.inArray("Data Store/"+selectionDict[key][0]+"/"+selectionDict[key][1]+".csv",filesToLoad) == -1){
+					filesToLoad.push("Data Store/"+selectionDict[key][0]+"/"+selectionDict[key][1]+".csv")
+
+				}
+			}
+		}
+		/*
 		seasonLists.forEach(function(listId,idx){
 			//Create list of csv files that need to be loaded
 			if ($.inArray("Data Store/"+($(seasonLists[idx])[0].value)+'/'+($(playerLists[idx])[0].value)+".csv", filesToLoad) == -1)
@@ -167,7 +214,7 @@ $(document).ready(function() {
 			  filesToLoad[idx+1]=("Data Store/"+($(seasonLists[idx])[0].value)+'/'+($(playerLists[idx])[0].value)+".csv")
 			}
 		})
-
+		*/
 		
 		//Create queue for loading multiple csv files
 		var queue = d3.queue();
@@ -253,7 +300,7 @@ $(document).ready(function() {
 			// Loop through each symbol / key and draw line
 		    dataGroup.forEach(function(d,index) {
 		    	var newID =(d.key).replace(/\s/g, '');
-		    	console.log(newID)
+		    	//console.log(newID)
 		        svg.append("path")
 	            .attr("class", "line")
 	            .attr("id",newID)
@@ -441,7 +488,6 @@ $(document).ready(function() {
 		seasonYearAdv = ($("#seasonAdv")[0].value) //This is folder name
 		statUnderStudyAdv = ($("#statAdv")[0].value) 
 
-		console.log(statUnderStudyAdv)
 		xStatLabel = (statUnderStudyAdv.substring(0,statUnderStudyAdv.indexOf("_")))
 		yStatLabel = (statUnderStudyAdv.substring(statUnderStudyAdv.indexOf("_")+1))
 

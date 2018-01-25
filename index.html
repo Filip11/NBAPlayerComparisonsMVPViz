@@ -138,7 +138,7 @@
     li.active a, li.active a:hover {
         background:white;
         color:#4c4c4c;
-        border-radius: 15px 15px 0px 0px;
+        /*border-radius: 15px 15px 0px 0px;*/
     }
  
     /*----- Content of Tabs -----*/
@@ -186,7 +186,7 @@
 	            		<select id="season" class="midAlign">
 	            			<!--<option selected disabled hidden>-- Select Season --</option>-->
 	            			<option value="2018">2017-2018</option>
-	            			<option value="2017" selected='selected'>2016-2017</option>
+	            			<option value="2017" selected="selected">2016-2017</option>
 	            			<option value="2016">2015-2016</option>
 	            			<option value="2015">2014-2015</option>
 	            		</select>
@@ -195,7 +195,8 @@
 	            			<label for="player">Player</label>
 
 	            			<select id="player" class="midAlign">
-	            				<option value='Russell_Westbrook_Stats_2017'>Russell Westbrook</option>
+	            				<!--<option selected disabled hidden>-- Select Season --</option>-->
+	            				<option value='Russell_Westbrook_Stats_2017' selected="selected">Russell Westbrook</option>
 	            				<option value='James_Harden_Stats_2017'>James Harden</option>
 	            				<option value='Kawhi_Leonard_Stats_2017'>Kawhi Leonard</option>
 	            				<option value='LeBron_James_Stats_2017'>LeBron James</option>
@@ -208,7 +209,7 @@
 	            				<option value='DeMar_DeRozan_Stats_2017'>DeMar DeRozan</option>
 	            				<!--<option value=""></option>-->
 	            			</select>
-	            			<a class="addPlayer" id = "0 "><img src="icons/green_plus.png"></img> Add Player </a>				
+	            			<a class="addPlayer" id = "0_add"><img src="icons/green_plus.png"></img> Add Player </a>				
 	            			</form>
 	            			
 	            		<div class="statSelect">
@@ -242,28 +243,28 @@
 	            		</form>
 		           		</div>
 		            </div>
+		            	<div id="1player" class="controls" style="display: none;">
+		            		<select id = "season1" class ="midAlign"></select>
+		            		<select disabled id = "player1" class ="midAlign"></select>
+		            		<a class="addPlayer" id = "1_add"> <img src="icons/green_plus.png"></img> Add Player </a>
+		            		<a class="removePlayer"id="1_rem"><img src="icons/red_remove.png"></img> Remove Player  </a>
+		            	</div>
 		            	<div id="2player" class="controls" style="display: none;">
 		            		<select id = "season2" class ="midAlign"></select>
-		            		<select id = "player2" class ="midAlign"></select>
-		            		<a class="addPlayer" id = "1 "> <img src="icons/green_plus.png"></img> Add Player </a>
-		            		<a class="removePlayer"id="1"><img src="icons/red_remove.png"></img> Remove Player  </a>
+		            		<select disabled id = "player2" class ="midAlign"></select>
+		            		<a class="addPlayer" id = "2_add"><img src="icons/green_plus.png"></img> Add Player </a>
+		            		<a class="removePlayer"id="2_rem"><img src="icons/red_remove.png"></img> Remove Player  </a>
 		            	</div>
 		            	<div id="3player" class="controls" style="display: none;">
 		            		<select id = "season3" class ="midAlign"></select>
-		            		<select id = "player3" class ="midAlign"></select>
-		            		<a class="addPlayer" id = "2 "><img src="icons/green_plus.png"></img> Add Player </a>
-		            		<a class="removePlayer"id="2"><img src="icons/red_remove.png"></img> Remove Player  </a>
+		            		<select disabled id = "player3" class ="midAlign"></select>
+		            		<a class="addPlayer" id = "3_add"><img src="icons/green_plus.png"></img> Add Player </a>
+		            		<a class="removePlayer"id="3_rem"><img src="icons/red_remove.png"></img> Remove Player  </a>
 		            	</div>
 		            	<div id="4player" class="controls" style="display: none;">
 		            		<select id = "season4" class ="midAlign"></select>
-		            		<select id = "player4" class ="midAlign"></select>
-		            		<a class="addPlayer" id = "3 "><img src="icons/green_plus.png"></img> Add Player </a>
-		            		<a class="removePlayer"id="3"><img src="icons/red_remove.png"></img> Remove Player  </a>
-		            	</div>
-		            	<div id="5player" class="controls" style="display: none;">
-		            		<select id = "season5" class ="midAlign"></select>
-		            		<select id = "player5" class ="midAlign"></select>
-		            		<a class="removePlayer"id="4"><img src="icons/red_remove.png"></img> Remove Player  </a>
+		            		<select disabled id = "player4" class ="midAlign"></select>
+		            		<a class="removePlayer"id="4_rem"><img src="icons/red_remove.png"></img> Remove Player  </a>
 		            	</div>
 		            	
 		            	
