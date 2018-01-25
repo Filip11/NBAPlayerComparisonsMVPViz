@@ -1,6 +1,4 @@
 //var filesToLoad = ["Data Store/MVPAverage/MVPAvgStats.csv"]//,"Data Store/"+seasonYear+'/'+playerYear+".csv"]
-var seasonLists = ["#season"]
-var playerLists = ["#player"]
 var possibleSeasonsLists = ["#season1","#season2","#season3","#season4"]
 var possiblePlayersLists = ["#player1","#player2","#player3","#player4"]
 var possibleDiv = ["#1player","#2player","#3player","#4player"]
@@ -9,7 +7,12 @@ $(document).ready(function() {
 
 	jQuery('.tabs .tab-links a').on('click', function(e)  {
 	        var currentAttrValue = jQuery(this).attr('href');
-	 
+			if(currentAttrValue == "#tab1"){
+				drawGraph()
+			}
+			else
+				drawScatterplot()
+
 	        // Show/Hide Tabs
 	        jQuery('.tabs ' + currentAttrValue).fadeIn(500).siblings().hide();
 	 
@@ -103,6 +106,7 @@ $(document).ready(function() {
 	$("#seasonAdv").on("change", drawScatterplot);
 	$("#statAdv").on("change", drawScatterplot);
 
+
 	// set the dimensions and margins of the graph
 	var margin = {top: 20, right: 220, bottom: 50, left: 50},
 	    width = 1200 - margin.left - margin.right,
@@ -153,13 +157,9 @@ $(document).ready(function() {
 	}
 	$(".addPlayer").click(function (){
 		idx = parseInt($(this).attr('id')[0])
-		console.log(idx)
 		$(possibleDiv[idx]).show();
 
-		seasonLists.push(possibleSeasonsLists[idx])
-		playerLists.push(possiblePlayersLists[idx])
-		//$("#"+idx+"_add").hide();
-		drawGraph()
+		$("#"+idx+"_add").hide();
 	})
 	$(".removePlayer").click(function (){
 		idx = parseInt($(this).attr('id'))
@@ -174,8 +174,6 @@ $(document).ready(function() {
 		       return this.defaultSelected;
 		});
 		//$(possibleDiv[idx-1]).hide();
-		seasonLists.splice(idx,1)
-		playerLists.splice(idx,1)
 
 		lineID = (playerToRemove.replace("_Stats_",""))
 		lineID = lineID.replace("_","")
@@ -190,6 +188,7 @@ $(document).ready(function() {
 		seasonYear = ($("#season1")[0].value) //This is folder name
 		playerYear = ($("#player")[0].value) //This is file 
 		statUnderStudy = ($("#stat")[0].value) //Column in file
+		statLabel = ($('#stat option:selected').text())
 		var filesToLoad = ["Data Store/MVPAverage/MVPAvgStats.csv"]
 		var selectionDict = {
 			"player":[($("#season")[0].value),($("#player")[0].value)],
@@ -334,7 +333,7 @@ $(document).ready(function() {
 			    .attr("x",0 - (height / 2))
 			    .attr("dy", "1em")
 			    .style("text-anchor", "middle")
-			    .text("Values");     
+			    .text(statLabel);     
 
 			// text label for the x axis
 			svg.append("text")             
@@ -374,6 +373,7 @@ $(document).ready(function() {
             legend.append('text')                                     // NEW
               .attr('x', legendRectSize + legendSpacing)              // NEW
               .attr('y', legendRectSize - legendSpacing)              // NEW
+              .attr('font-family',"Lucida Bright")
               .text(function(d) {
               	return d.key;
                });            
