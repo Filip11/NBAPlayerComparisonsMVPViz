@@ -14,14 +14,14 @@ allPlayersHrefDict = dict()
 
 def main():
 	#Build dict with links for all NBA players
-	allPlayersHrefDict.update(generatePlayerRef.buildAllPlayersDict("https://www.basketball-reference.com/leagues/NBA_2017_per_game.html"))
+	allPlayersHrefDict.update(generatePlayerRef.buildAllPlayersDict("https://www.basketball-reference.com/leagues/NBA_2018_per_game.html"))
 	#get Average MVPs and stats
 	averageMVPProcess()
 
 	singleStatsSetup()
 	#Player season data to be retrieved
 	playersToStudy=[['LeBron James','2018'],['James Harden','2018'],['Giannis Antetokounmpo','2018'],['Kevin Durant','2018'],['Kyrie Irving','2018'],['Stephen Curry','2018'],['Russell Westbrook','2018'],['DeMar DeRozan','2018'],['Anthony Davis','2018'],
-	['Kyle Lowry','2018'],['Karl-Anthony Towns','2018'],['Nikola Jokic','2018'],
+	['Kyle Lowry','2018'],['Karl-Anthony Towns','2018'],['Nikola Jokic','2018'],['Bogdan Bogdanovic','2018'],
 	['Russell Westbrook','2017'],['James Harden','2017'],['Kawhi Leonard','2017'],['LeBron James','2017'],['Isaiah Thomas','2017'],['Stephen Curry','2017'],
 	['John Wall','2017'],['Giannis Antetokounmpo','2017'],['Anthony Davis','2017'],['Kevin Durant','2017'],['DeMar DeRozan','2017'],['Stephen Curry','2016'],['Kawhi Leonard','2016'],
 	['LeBron James','2016'],['Russell Westbrook','2016'],['Kevin Durant','2016'],['Chris Paul','2016'],['Draymond Green','2016'],['Damian Lillard','2016'],['James Harden','2016'],
@@ -29,7 +29,7 @@ def main():
 	['LaMarcus Aldridge','2015'],['Marc Gasol','2015'],['Blake Griffin','2015'],['Tim Duncan','2015'],['Kawhi Leonard','2015'],['Klay Thompson','2015']]
 	
 	latestPlayersOnly = [['LeBron James','2018'],['James Harden','2018'],['Giannis Antetokounmpo','2018'],['Kevin Durant','2018'],['Kyrie Irving','2018'],['Stephen Curry','2018'],['Russell Westbrook','2018'],['DeMar DeRozan','2018'],['Anthony Davis','2018'],
-	['Kyle Lowry','2018'],['Karl-Anthony Towns','2018'],['Nikola Jokic','2018']]
+	['Kyle Lowry','2018'],['Karl-Anthony Towns','2018'],['Nikola Jokic','2018'],['Bogdan Bogdanovic','2018']]
 	for playerSeason in playersToStudy:
 		player=playerSeason[0]
 		season=playerSeason[1]
@@ -97,6 +97,10 @@ def getMVPSeasonStats(masterDataFrame):
 	mvpMeanFinalDF = pandas.DataFrame()
 	singleStatsDF = pandas.DataFrame()
 	singleStatsMeanDF = pandas.DataFrame()
+	mvpPerGameDFBackCourt = pandas.DataFrame()
+	mvpPerGameDFFrontCourt = pandas.DataFrame()
+	mvpMeanFinalDFBackCourt = pandas.DataFrame()
+	mvpMeanFinalDFFrontCourt = pandas.DataFrame()
 
 	for i in range(len(masterDataFrame)):
 		#Get player and season from origin data frame
@@ -144,8 +148,15 @@ def getMVPSeasonStats(masterDataFrame):
 		mvpPer100StatsDesired = ["off_rtg","def_rtg"]
 		singleStatsDesired = []
 
+		#Used to refine average MVP data
+		backcourtPos = ["PG","SG"]
+		frontcourtPos = ["SF","PF","C"]
+		positionUnderStudy = ""
+
 		#Loop through stats of MVPSTATSDESIRED to build MVP data frame
 		for td in seasonStats:
+			if (td['data-stat'] == "pos"):
+				positionUnderStudy = td.getText()
 			for statOfInterest in mvpStatsDesired:
 				if(td['data-stat'] == statOfInterest):
 					tmpSeasonStats.append(td.getText())
@@ -166,11 +177,10 @@ def getMVPSeasonStats(masterDataFrame):
 											tmpSeasonStats.append(td.getText())
 
 										if len(tmpSeasonStats) == len(mvpStatsDesired) + len(mvpAdvStatsDesired) + len(mvpPer100StatsDesired):
-											tmpSeasonStats.insert(0,"Average MVP")
+											tmpSeasonStats.insert(0,"Average MVP - past 30 years")
 											playerData.append(tmpSeasonStats)
 											tmpSeasonStats = []
 					
-
 
 		#Temp Dataframe for single mvps stats single season
 		seasonStatsDataFrame = pandas.DataFrame(playerData,columns=columnHeaders)
@@ -182,6 +192,12 @@ def getMVPSeasonStats(masterDataFrame):
 		mvpGameStatsDF = analyzeMVPStats(playerUnderStudy,playedYear)
 		mvpPerGameDF = pandas.concat([mvpGameStatsDF,mvpPerGameDF],axis=1)
 
+		#Refine MVP line stats
+		if (positionUnderStudy in backcourtPos):
+			mvpPerGameDFBackCourt = pandas.concat([mvpGameStatsDF,mvpPerGameDFBackCourt],axis=1)
+		else:
+			mvpPerGameDFFrontCourt = pandas.concat([mvpGameStatsDF,mvpPerGameDFFrontCourt],axis=1)
+
 		#Single stats
 		singleColumnHeaders = ["Name","PER","OWS","DWS","WS","WS/48","OBPM","DBPM","BPM","VORP"]
 		#Get list of adv stats and append to DF
@@ -192,14 +208,22 @@ def getMVPSeasonStats(masterDataFrame):
 	mvpMeanFinalDF = getMeanMVPStatistic(columnHeaders,mvpPerGameDF)
 	#Get average of all mvps single stats so average of each column
 	singleStatsMeanDF = getMeanColumns(singleColumnHeaders,singleStatsDF)
-	
+	#Set our backcourt data frame equal to DF with mean of every stat in column headers - BACKCOURT
+	mvpMeanFinalDFBackCourt = getMeanMVPStatistic(columnHeaders,mvpPerGameDFBackCourt)
+	#Set our backcourt data frame equal to DF with mean of every stat in column headers - FRONTCOURT
+	mvpMeanFinalDFFrontCourt = getMeanMVPStatistic(columnHeaders,mvpPerGameDFFrontCourt)
+
 	#Set Name value as consistent
-	mvpMeanFinalDF['Name'] = 'Average MVP'
-	singleStatsMeanDF['Name'] = 'Average MVP'
+	mvpMeanFinalDF['Name'] = 'Average MVP - Past 30 Years'
+	singleStatsMeanDF['Name'] = 'Average MVP - Past 30 Years'
+	mvpMeanFinalDFBackCourt['Name'] = 'Average Backcourt MVP - Past 30 Years'
+	mvpMeanFinalDFFrontCourt['Name'] = 'Average Frontcourt MVP - Past 30 Years'
 
 	#Write stats to csv
 	writeMVPAverageStatsToFile(columnHeaders,mvpMeanFinalDF,"MVPAvgStats")
 	writeMVPAverageStatsToFile(singleColumnHeaders,singleStatsMeanDF.head(n=1),"MVPAvgSingleAdvStats")
+	writeMVPAverageStatsToFile(columnHeaders,mvpMeanFinalDFBackCourt,"BackcourtMVPAvgStats")
+	writeMVPAverageStatsToFile(columnHeaders,mvpMeanFinalDFFrontCourt,"FrontcourtMVPAvgStats")
 
 	#Concat the stats with the info mvp season data frame
 	return(pandas.concat([masterDataFrame.set_index('MVP'),mvpsStatsDataFrame.set_index('MVP')],axis=1, join = 'inner').reset_index())

@@ -39,6 +39,10 @@
 		display: flex;
 		justify-content: space-between;
 	}
+	.headerIcon{
+		float: left;
+		padding-top: 4px;
+	}
 	hr {
 		height: 3px;
 		border: 0;
@@ -47,7 +51,7 @@
 	.line {
 	  fill: none;
 	  stroke: steelblue;
-	  stroke-width: 2px;
+	  stroke-width: 1.5px;
 	}
 	.grid line {
 	  stroke: lightgrey;
@@ -79,7 +83,7 @@
 		shape-rendering:crispEdges
 	}
 	.statSelect{
-		padding-left:440px;
+		padding-left:285px;
 	}
 	.statSelectAdv{
 		padding-left: 678px;
@@ -88,12 +92,15 @@
 		margin-left: 60px;
 		padding-bottom: 10px;
 	}
+	.addPlayer{
+		visibility: visible;
+	}
 	a:hover {
  		cursor:pointer;
 	}
 	a{
 		padding-right: 10px;
-		display: inline-block;*/
+		display: inline-block;
 	}
 	h2{
 		margin-left:60px;
@@ -167,6 +174,9 @@
 
 	</style>
 	<body>
+		<div class="headerIcon">
+			<img src="icons/nbalogo.svg"></img>
+		</div>
 		<div class="title">
 			<h2>NBA PLAYER COMPARISONS</h2>
 			<h2><small>Developed & Designed by <a href="https://github.com/Filip11">Filip Drobnjakovic</a></small></h2>
@@ -177,6 +187,7 @@
 			<div class="controls">
 		  This tool aims to be used to track numerous player's statistical averages over the course of a season. This data is graphed over the benchmark of the past 30
 		  NBA MVPs. Additional players can be added to the graph for comparison using the Add Player/Remove Player controls.
+		  Additionally, advanced season stat points are plotted and can be viewed by switching to the "Adv Season Stats" tab
 			</div>
 		</div>
 		<div class="tabs">
@@ -203,7 +214,7 @@
 
 	            			<select id="player" class="midAlign">
 	            				<!--<option selected disabled hidden>-- Select Season --</option>-->
-	            				<option value='Russell_Westbrook_Stats_2017' selected="selected">Russell Westbrook</option>
+	            				<option value='Russell_Westbrook_Stats_2017' selected="selected">OKC - Russell Westbrook</option>
 	            				<option value='James_Harden_Stats_2017'>James Harden</option>
 	            				<option value='Kawhi_Leonard_Stats_2017'>Kawhi Leonard</option>
 	            				<option value='LeBron_James_Stats_2017'>LeBron James</option>
@@ -246,9 +257,20 @@
 	            			<option value= "DFRTG_G">DRTG</option>
 
 	            		</select>
-	            		
 	            		</form>
-		           		</div>
+	            		</div>
+	            		<div>
+	            		<form>
+	            		<label for="refineMVP">Refine MVP Line</label>
+	            		<select id = "refineMVP" class ="midAlign">
+	            			<option value="MVPAvgStats">All Players</option>
+	            			<option value="BackcourtMVPAvgStats">Backcourt Players Only</option>
+	            			<option value="FrontcourtMVPAvgStats">Frontcourt Players Only</option>
+
+	            		</select>
+	            		</form>
+	            	</div>
+		           		
 		            </div>
 		            	<div id="1player" class="controls" style="display: none;">
 		            		<select id = "season1" class ="midAlign"></select>
