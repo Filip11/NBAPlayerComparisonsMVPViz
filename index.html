@@ -72,6 +72,9 @@
 		font-family:"Lucida Bright";
 		
 	}
+	.firstAdd{
+		padding-top: 23px;
+	}
 	.selectWidth{
 		width: auto;
 	}
@@ -92,7 +95,7 @@
 		shape-rendering:crispEdges
 	}
 	.statSelect{
-		padding-left:195px;
+		padding-left:90px;
 	}
 	.statSelectAdv{
 		padding-left: 620px;
@@ -199,15 +202,15 @@
 		</div>
 		<hr>
 		<div class="subtitle">
-		<a class="About"data-toggle="collapse" data-target="#demo">About</a>
+			<a class="About"data-toggle="collapse" data-target="#demo">About</a>
+			<p><i>Data Updated: <span id="dateAccessed"></span> </i></p>	
+		</div>
 		<div id="demo" class="collapse">
-			<div class="controls">
-		  This tool aims to be used to track numerous player's statistical averages over the course of a season. This data is graphed over the benchmark of the past 30
-		  NBA MVPs. Additional players can be added to the graph for comparison using the Add Player/Remove Player controls.
-		  Additionally, advanced season stat points are plotted and can be viewed by switching to the "Adv Season Stats" tab
-			</div>
-		</div id="dateAccessed">
-		<p><i>Data Updated: <span id="dateAccessed"></span> </i></p>
+				<div class="controls">
+			  This tool aims to be used to track numerous player's statistical averages over the course of a season. This data is graphed over the benchmark of the past 30
+			  NBA MVPs. Additional players can be added to the graph for comparison using the Add Player/Remove Player controls.
+			  Additionally, advanced season stat points are plotted and can be viewed by switching to the "Adv Season Stats" tab
+				</div>
 		</div>
 		<div class="tabs">
 		    <ul class="nav nav-tabs">
@@ -268,7 +271,7 @@
 	            			</select>
 	            			</form>
 	            			<form>
-	            			<a class="addPlayer" id = "0_add"><img src="icons/green_plus.png"></img> Add Player </a>
+	            			<a class="addPlayer firstAdd" id = "0_add"><img src="icons/green_plus.png"></img> Add Player </a>
 
 	            			</form>
 	            		<div class="statSelect">

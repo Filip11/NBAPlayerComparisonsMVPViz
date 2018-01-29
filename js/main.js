@@ -475,9 +475,8 @@ $(document).ready(function() {
 		    })
 			
 		})
-	
 	}
-
+	
 	function drawScatterplot(){
 		seasonYearAdv = ($("#seasonAdv")[0].value) //This is folder name
 		statUnderStudyAdv = ($("#statAdv")[0].value) 
@@ -487,8 +486,7 @@ $(document).ready(function() {
 
 		var scatterPlotFiles = ["Data Store/MVPAverage/MVPAvgSingleAdvStats.csv","Data Store/SingleStats/"+seasonYearAdv+"/AdvStatPoints.csv"]
 		var color = d3.scaleOrdinal(d3.schemeCategory20);
-
-
+		
 		//Create queue for loading multiple csv files
 		var queue = d3.queue();
 

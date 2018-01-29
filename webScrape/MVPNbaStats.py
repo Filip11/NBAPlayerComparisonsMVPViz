@@ -18,9 +18,9 @@ def main():
 	#Build dict with links for all NBA players
 	allPlayersHrefDict.update(generatePlayerRef.buildAllPlayersDict("https://www.basketball-reference.com/leagues/NBA_2018_per_game.html"))
 	#get Average MVPs and stats
-	averageMVPProcess()
+	#averageMVPProcess()
 
-	singleStatsSetup()
+	#singleStatsSetup()
 	#Player season data to be retrieved
 	playersToStudy=[['LeBron James','2018'],['James Harden','2018'],['Giannis Antetokounmpo','2018'],['Kevin Durant','2018'],['Kyrie Irving','2018'],['Stephen Curry','2018'],['Russell Westbrook','2018'],['DeMar DeRozan','2018'],['Anthony Davis','2018'],
 	['Kyle Lowry','2018'],['Karl-Anthony Towns','2018'],['Nikola Jokic','2018'],['Paul George','2018'],['Gary Harris','2018'],['Klay Thompson','2018'],['Draymond Green','2018'],['Chris Paul','2018'],['Brandon Ingram','2018'],['DeMarcus Cousins','2018'],['Victor Oladipo','2018'],
@@ -38,12 +38,12 @@ def main():
 		player=playerSeason[0]
 		season=playerSeason[1]
 		#Get player stats per game
-		playerTradDF = getPlayerStatsSeason(player,season) #uncomment to fill out our players files
+		#playerTradDF = getPlayerStatsSeason(player,season) #uncomment to fill out our players files
 
 	#write timestamo of data accessed to public file
 	parentFolder = (os.path.abspath(os.path.join(os.getcwd(), os.pardir)))
 	with open(parentFolder+"/Data Store/LastDataAccess.txt",'w+') as lastUpdate:
-		lastUpdate.write(strftime("%Y-%m-%d %H:%M:%S", time.localtime()))	
+		lastUpdate.write(strftime("%Y-%m-%d %H:%M:%S", time.localtime())+" EST")	
 
 def averageMVPProcess():
 	#create soup obj on list of seasons html
