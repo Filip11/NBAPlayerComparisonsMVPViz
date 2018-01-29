@@ -21,6 +21,9 @@ $(document).ready(function() {
 	        e.preventDefault();
 	    });
 
+	d3.text("Data Store/LastDataAccess.txt", function(error, data) {
+		d3.select("#dateAccessed").text(data);
+	})
 	/* Handle Disabling of dropdown menu logic */
 	$(function() {
         $("#season1").change(function() {

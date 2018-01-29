@@ -6,6 +6,8 @@ import os
 import advStatCalc
 import csv
 import numpy as np
+import time
+from time import gmtime,strftime
 
 seasonHrefDict = dict()
 mvpHrefDict = dict()
@@ -37,7 +39,11 @@ def main():
 		season=playerSeason[1]
 		#Get player stats per game
 		playerTradDF = getPlayerStatsSeason(player,season) #uncomment to fill out our players files
-		
+
+	#write timestamo of data accessed to public file
+	parentFolder = (os.path.abspath(os.path.join(os.getcwd(), os.pardir)))
+	with open(parentFolder+"/Data Store/LastDataAccess.txt",'w+') as lastUpdate:
+		lastUpdate.write(strftime("%Y-%m-%d %H:%M:%S", time.localtime()))	
 
 def averageMVPProcess():
 	#create soup obj on list of seasons html

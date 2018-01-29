@@ -39,6 +39,12 @@
 		display: flex;
 		justify-content: space-between;
 	}
+	.subtitle{
+		margin-left:0px;
+		margin-right:160px;
+		display: flex;
+		justify-content: space-between;
+	}
 	.headerIcon{
 		float: left;
 		padding-top: 4px;
@@ -80,7 +86,7 @@
 	    pointer-events: none;			
 	}
 	form{
-		padding-top:10px;
+		padding-top:5px;
 	}
 	.legend{
 		shape-rendering:crispEdges
@@ -93,7 +99,9 @@
 	}
 	.About{
 		margin-left: 75px;
-		padding-bottom: 10px;
+		padding-bottom: 5px;
+		display: flex;
+		justify-content: space-between;
 	}
 	.addPlayer{
 		visibility: visible;
@@ -190,6 +198,7 @@
 			<h2><small>Developed & Designed by <a href="https://github.com/Filip11">Filip Drobnjakovic</a></small></h2>
 		</div>
 		<hr>
+		<div class="subtitle">
 		<a class="About"data-toggle="collapse" data-target="#demo">About</a>
 		<div id="demo" class="collapse">
 			<div class="controls">
@@ -197,6 +206,8 @@
 		  NBA MVPs. Additional players can be added to the graph for comparison using the Add Player/Remove Player controls.
 		  Additionally, advanced season stat points are plotted and can be viewed by switching to the "Adv Season Stats" tab
 			</div>
+		</div id="dateAccessed">
+		<p><i>Data Updated: <span id="dateAccessed"></span> </i></p>
 		</div>
 		<div class="tabs">
 		    <ul class="nav nav-tabs">
