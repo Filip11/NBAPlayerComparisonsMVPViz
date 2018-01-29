@@ -66,6 +66,9 @@
 		font-family:"Lucida Bright";
 		
 	}
+	.selectWidth{
+		width: auto;
+	}
 	div.tooltip {	
 	    position: absolute;			
 	    text-align: center;			
@@ -83,17 +86,18 @@
 		shape-rendering:crispEdges
 	}
 	.statSelect{
-		padding-left:285px;
+		padding-left:195px;
 	}
 	.statSelectAdv{
-		padding-left: 678px;
+		padding-left: 620px;
 	}
 	.About{
-		margin-left: 60px;
+		margin-left: 75px;
 		padding-bottom: 10px;
 	}
 	.addPlayer{
 		visibility: visible;
+		float: right;
 	}
 	a:hover {
  		cursor:pointer;
@@ -127,27 +131,31 @@
         float:left;
         list-style:none;
     }
- 
-        .tab-links a {
-            padding:9px 15px;
-            display:inline-block;
-            border-radius: 15px 15px 0px 0px;
-            border-style: solid;
-            border-left-width: 1px;
-            border-right-width: 1px;
-            border-bottom-width: 1px;
-            border-color: steelblue;
-            background:#7FB5DA;
-            font-size:16px;
-            font-weight:600;
-            color:#4c4c4c;
-            transition:all linear 0.15s;
-        }
- 
-        .tab-links a:hover {
-            background:#a7cce5;
-            text-decoration:none;
-        }
+ 	.nav-tabs{
+ 		margin-left: 60px;
+ 		font-size:16px;
+
+ 	}
+    .tab-links a {
+        padding:9px 15px;
+        display:inline-block;
+        border-radius: 15px 15px 0px 0px;
+        border-style: solid;
+        border-left-width: 1px;
+        border-right-width: 1px;
+        border-bottom-width: 1px;
+        border-color: steelblue;
+        background:#7FB5DA;
+        font-size:16px;
+        font-weight:600;
+        color:#4c4c4c;
+        transition:all linear 0.15s;
+    }
+
+    .tab-links a:hover {
+        background:#a7cce5;
+        text-decoration:none;
+    }
  
     li.active a, li.active a:hover {
         background:white;
@@ -191,7 +199,7 @@
 			</div>
 		</div>
 		<div class="tabs">
-		    <ul class="tab-links">
+		    <ul class="nav nav-tabs">
 		        <li class="active"><a href="#tab1">Game Stats</a></li>
 		        <li><a href="#tab2">Adv Season Stats</a></li>
 
@@ -201,10 +209,10 @@
 	            	<div class="controls">
 	            		<form>
 	            		<label for="season">Season</label>
-	            		<select id="season" class="midAlign">
+	            		<select id="season" class="form-control">
 	            			<!--<option selected disabled hidden>-- Select Season --</option>-->
-	            			<option value="2018">2017-2018</option>
-	            			<option value="2017" selected="selected">2016-2017</option>
+	            			<option value="2018" selected="selected">2017-2018</option>
+	            			<option value="2017" >2016-2017</option>
 	            			<option value="2016">2015-2016</option>
 	            			<option value="2015">2014-2015</option>
 	            		</select>
@@ -212,28 +220,50 @@
 	            			<form>
 	            			<label for="player">Player</label>
 
-	            			<select id="player" class="midAlign">
+	            			<select id="player" class="form-control">
 	            				<!--<option selected disabled hidden>-- Select Season --</option>-->
-	            				<option value='Russell_Westbrook_Stats_2017' selected="selected">OKC - Russell Westbrook</option>
-	            				<option value='James_Harden_Stats_2017'>James Harden</option>
-	            				<option value='Kawhi_Leonard_Stats_2017'>Kawhi Leonard</option>
-	            				<option value='LeBron_James_Stats_2017'>LeBron James</option>
-	            				<option value='Isaiah_Thomas_Stats_2017'>Isaiah Thomas</option>
-	            				<option value='Stephen_Curry_Stats_2017'>Stephen Curry</option>
-	            				<option value='John_Wall_Stats_2017'>John Wall</option>
-	            				<option value='Giannis_Antetokounmpo_Stats_2017'>Giannis Antetokounmpo</option>
-	            				<option value='Anthony_Davis_Stats_2017'>Anthony Davis</option>
-	            				<option value='Kevin_Durant_Stats_2017'>Kevin Durant</option>
-	            				<option value='DeMar_DeRozan_Stats_2017'>DeMar DeRozan</option>
+	            				<option value='Kyrie_Irving_Stats_2018'>BOS - Kyrie Irving</option>
+	            				<option value='LeBron_James_Stats_2018'selected="selected">CLE - LeBron James</option>
+	            				<option value='Nikola_Jokic_Stats_2018'>DEN - Nikola Jokic</option>
+	            				<option value='Gary_Harris_Stats_2018'>DEN - Gary Harris</option>
+	            				<option value='Kevin_Durant_Stats_2018'>GSW - Kevin Durant</option>
+	            				<option value='Stephen_Curry_Stats_2018'>GSW - Stephen Curry</option>
+	            				<option value='Klay_Thompson_Stats_2018'>GSW - Klay Thompson</option>
+	            				<option value='Draymond_Green_Stats_2018'>GSW - Draymond Green</option>
+	            				<option value='James_Harden_Stats_2018'>HOU - James Harden</option>
+	            				<option value='Chris_Paul_Stats_2018'>HOU - Chris Paul</option>
+	            				<option value='Victor_Oladipo_Stats_2018'>IND - Victor Oladipo</option>
+	            				<option value='Lou_Williams_Stats_2018'>LAC - Lou Williams</option>
+	            				<option value='Blake_Griffin_Stats_2018'>LAC - Blake Griffin</option>
+	            				<option value='Brandon_Ingram_Stats_2018'>LAL - Brandon Ingram</option>
+	            				<option value='Giannis_Antetokounmpo_Stats_2018'>MIL - Giannis Antetokounmpo</option>
+	            				<option value='Karl-Anthony_Towns_Stats_2018'>MIN - Karl-Anthony Towns</option>
+	            				<option value='Jimmy_Butler_Stats_2018'>MIN - Jimmy Butler</option>
+	            				<option value='Anthony_Davis_Stats_2018'>NOP - Anthony Davis</option>
+	            				<option value='DeMarcus_Cousins_Stats_2018'>NOP - DeMarcus Cousins</option>
+	            				<option value='Kristaps_Porzingis_Stats_2018'>NYK - Kristaps Porzingis</option>	            					            			
+	            				<option value='Russell_Westbrook_Stats_2018'>OKC - Russell Westbrook</option>
+	            				<option value='Paul_George_Stats_2018'>OKC - Paul George</option>
+	            				<option value='Joel_Embiid_Stats_2018'>PHI - Joel Embiid</option>
+	            				<option value='Ben_Simmons_Stats_2018'>PHI - Ben Simmons</option>
+	            				<option value='Devin_Booker_Stats_2018'>PHX - Devin Booker</option>
+	            				<option value='Damian_Lillard_Stats_2018'>POR - Damian Lillard</option>    					            				
+	            				<option value='DeMar_DeRozan_Stats_2018'>TOR - DeMar DeRozan</option>
+	            				<option value='Kyle_Lowry_Stats_2018'>TOR - Kyle Lowry</option>
+	            				<option value='Donovan_Mitchell_Stats_2018'>UTA - Donovan Mitchell</option>
+	            				<option value='Bradley_Beal_Stats_2018'>WAS - Bradley Beal</option>	            				
+	            				
 	            				<!--<option value=""></option>-->
 	            			</select>
-	            			<a class="addPlayer" id = "0_add"><img src="icons/green_plus.png"></img> Add Player </a>				
 	            			</form>
-	            			
+	            			<form>
+	            			<a class="addPlayer" id = "0_add"><img src="icons/green_plus.png"></img> Add Player </a>
+
+	            			</form>
 	            		<div class="statSelect">
 	            		<form>
 	            		<label for="stat">Stat</label>
-	            		<select id = "stat" class ="midAlign">
+	            		<select id = "stat" class ="form-control">
 	            			<option value="PTS_G">PPG</option>
 	            			<option value="AST_G">AST</option>
 	            			<option value="FG_G">FGM</option>
@@ -262,10 +292,10 @@
 	            		<div>
 	            		<form>
 	            		<label for="refineMVP">Refine MVP Line</label>
-	            		<select id = "refineMVP" class ="midAlign">
+	            		<select id = "refineMVP" class ="form-control">
 	            			<option value="MVPAvgStats">All Players</option>
-	            			<option value="BackcourtMVPAvgStats">Backcourt Players Only</option>
-	            			<option value="FrontcourtMVPAvgStats">Frontcourt Players Only</option>
+	            			<option value="BackcourtMVPAvgStats">Backcourt Players Only - PG, SG</option>
+	            			<option value="FrontcourtMVPAvgStats">Frontcourt Players Only - SF, PF, C</option>
 
 	            		</select>
 	            		</form>
@@ -273,31 +303,30 @@
 		           		
 		            </div>
 		            	<div id="1player" class="controls" style="display: none;">
-		            		<select id = "season1" class ="midAlign"></select>
-		            		<select disabled id = "player1" class ="midAlign"></select>
+		            		<select id = "season1" class ="form-control selectWidth"></select>
+		            		<select disabled id = "player1" class ="form-control selectWidth"></select>
 		            		<a class="addPlayer" id = "1_add"> <img src="icons/green_plus.png"></img> Add Player </a>
 		            		<a class="removePlayer"id="1_rem"><img src="icons/red_remove.png"></img> Remove Player  </a>
 		            	</div>
 		            	<div id="2player" class="controls" style="display: none;">
-		            		<select id = "season2" class ="midAlign"></select>
-		            		<select disabled id = "player2" class ="midAlign"></select>
+		            		<select id = "season2" class ="form-control selectWidth"></select>
+		            		<select disabled id = "player2" class ="form-control selectWidth"></select>
 		            		<a class="addPlayer" id = "2_add"><img src="icons/green_plus.png"></img> Add Player </a>
 		            		<a class="removePlayer"id="2_rem"><img src="icons/red_remove.png"></img> Remove Player  </a>
 		            	</div>
 		            	<div id="3player" class="controls" style="display: none;">
-		            		<select id = "season3" class ="midAlign"></select>
-		            		<select disabled id = "player3" class ="midAlign"></select>
+		            		<select id = "season3" class ="form-control selectWidth"></select>
+		            		<select disabled id = "player3" class ="form-control selectWidth"></select>
 		            		<a class="addPlayer" id = "3_add"><img src="icons/green_plus.png"></img> Add Player </a>
 		            		<a class="removePlayer"id="3_rem"><img src="icons/red_remove.png"></img> Remove Player  </a>
 		            	</div>
 		            	<div id="4player" class="controls" style="display: none;">
-		            		<select id = "season4" class ="midAlign"></select>
-		            		<select disabled id = "player4" class ="midAlign"></select>
+		            		<select id = "season4" class ="form-control selectWidth"></select>
+		            		<select disabled id = "player4" class ="form-control selectWidth"></select>
 		            		<a class="removePlayer"id="4_rem"><img src="icons/red_remove.png"></img> Remove Player  </a>
 		            	</div>
 		            	
 		            	
-
 		            	<div class="container-fluid">
 		            		<svg width="860" height="5"></svg>
 		            		<div id="comparisonGraph"></div>
@@ -309,7 +338,7 @@
 		            <div class="controls">
 		            	<form>
 		            	<label for="seasonAdv">Season</label>
-		            	<select id="seasonAdv" class="midAlign">
+		            	<select id="seasonAdv" class="form-control">
 		            		<!--<option selected disabled hidden>-- Select Season --</option>-->
 		            		<option value="2018" selected='selected'>2017-2018</option>
 		            		<option value="2017">2016-2017</option>
@@ -320,7 +349,7 @@
 		            	<div class="statSelectAdv">
 		            		<form>
 		            			<label for="statAdv">Stat</label>
-		            			<select id = "statAdv" class ="midAlign">
+		            			<select id = "statAdv" class ="form-control">
 		            				<option value = "VORP_PER">VORP vs PER</option>
 		            				<option value= "DWS_OWS">DWS vs OWS</option>
 		            				<option value= "WS_WS/48">WS vs WS/48</option>

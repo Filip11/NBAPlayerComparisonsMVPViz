@@ -4,7 +4,7 @@ var possibleDiv = ["#1player","#2player","#3player","#4player"]
 
 $(document).ready(function() {
 
-	jQuery('.tabs .tab-links a').on('click', function(e)  {
+	jQuery('.tabs .nav-tabs a').on('click', function(e)  {
 	        var currentAttrValue = jQuery(this).attr('href');
 			if(currentAttrValue == "#tab1"){
 				drawGraph()
@@ -66,13 +66,13 @@ $(document).ready(function() {
                 player = "#player"
         }
         if (val == "2018"){
-        	$(player).html("<option value='LeBron_James_Stats_2018'>CLE - LeBron James</option><option value='James_Harden_Stats_2018'>James Harden</option><option value='Giannis_Antetokounmpo_Stats_2018'>Giannis Antetokounmpo</option><option value='Kevin_Durant_Stats_2018'>Kevin Durant</option><option value='Kyrie_Irving_Stats_2018'>Kyrie Irving</option><option value='Stephen_Curry_Stats_2018'>Stephen Curry</option><option value='Russell_Westbrook_Stats_2018'>Russell Westbrook</option><option value='DeMar_DeRozan_Stats_2018'>DeMar DeRozan</option><option value='Anthony_Davis_Stats_2018'>Anthony Davis</option><option value='Kyle_Lowry_Stats_2018'>Kyle Lowry</option><option value='Karl-Anthony_Towns_Stats_2018'>Karl-Anthony Towns</option><option value='Nikola_Jokic_Stats_2018'>Nikola Jokic</option><option value='Bogdan_Bogdanovic_Stats_2018'>Bogdan Bogdanovic</option>");
+        	$(player).html("<option value='Kyrie_Irving_Stats_2018'>BOS - Kyrie Irving</option><option value='LeBron_James_Stats_2018'>CLE - LeBron James</option><option value='Nikola_Jokic_Stats_2018'>DEN - Nikola Jokic</option><option value='Gary_Harris_Stats_2018'>DEN - Gary Harris</option><option value='Kevin_Durant_Stats_2018'>GSW - Kevin Durant</option><option value='Stephen_Curry_Stats_2018'>GSW - Stephen Curry</option><option value='Klay_Thompson_Stats_2018'>GSW - Klay Thompson</option><option value='Draymond_Green_Stats_2018'>GSW - Draymond Green</option><option value='James_Harden_Stats_2018'>HOU - James Harden</option><option value='Chris_Paul_Stats_2018'>HOU - Chris Paul</option><option value='Victor_Oladipo_Stats_2018'>IND - Victor Oladipo</option><option value='Lou_Williams_Stats_2018'>LAC - Lou Williams</option><option value='Blake_Griffin_Stats_2018'>LAC - Blake Griffin</option><option value='Brandon_Ingram_Stats_2018'>LAL - Brandon Ingram</option><option value='Giannis_Antetokounmpo_Stats_2018'>MIL - Giannis Antetokounmpo</option><option value='Karl-Anthony_Towns_Stats_2018'>MIN - Karl-Anthony Towns</option><option value='Jimmy_Butler_Stats_2018'>MIN - Jimmy Butler</option><option value='Anthony_Davis_Stats_2018'>NOP - Anthony Davis</option><option value='DeMarcus_Cousins_Stats_2018'>NOP - DeMarcus Cousins</option><option value='Kristaps_Porzingis_Stats_2018'>NYK - Kristaps Porzingis</option>	            					            			<option value='Russell_Westbrook_Stats_2018'>OKC - Russell Westbrook</option><option value='Paul_George_Stats_2018'>OKC - Paul George</option><option value='Joel_Embiid_Stats_2018'>PHI - Joel Embiid</option><option value='Ben_Simmons_Stats_2018'>PHI - Ben Simmons</option><option value='Devin_Booker_Stats_2018'>PHX - Devin Booker</option><option value='Damian_Lillard_Stats_2018'>POR - Damian Lillard</option>    					            				<option value='DeMar_DeRozan_Stats_2018'>TOR - DeMar DeRozan</option><option value='Kyle_Lowry_Stats_2018'>TOR - Kyle Lowry</option><option value='Donovan_Mitchell_Stats_2018'>UTA - Donovan Mitchell</option><option value='Bradley_Beal_Stats_2018'>WAS - Bradley Beal</option>");
         }else if (val == "2017") {
-            $(player).html("<option value='Russell_Westbrook_Stats_2017'>Russell Westbrook</option><option value='James_Harden_Stats_2017'>James Harden</option><option value='Kawhi_Leonard_Stats_2017'>Kawhi Leonard</option><option value='LeBron_James_Stats_2017'>LeBron James</option><option value='Isaiah_Thomas_Stats_2017'>Isaiah Thomas</option><option value='Stephen_Curry_Stats_2017'>Stephen Curry</option><option value='John_Wall_Stats_2017'>John Wall</option><option value='Giannis_Antetokounmpo_Stats_2017'>Giannis Antetokounmpo</option><option value='Anthony_Davis_Stats_2017'>Anthony Davis</option><option value='Kevin_Durant_Stats_2017'>Kevin Durant</option><option value='DeMar_DeRozan_Stats_2017'>DeMar DeRozan</option>");
+            $(player).html("<option value='Russell_Westbrook_Stats_2017'>OKC - Russell Westbrook</option><option value='James_Harden_Stats_2017'>HOU - James Harden</option><option value='Kawhi_Leonard_Stats_2017'>SAS - Kawhi Leonard</option><option value='LeBron_James_Stats_2017'>CLE - LeBron James</option><option value='Isaiah_Thomas_Stats_2017'>BOS - Isaiah Thomas</option><option value='Stephen_Curry_Stats_2017'>GSW - Stephen Curry</option><option value='John_Wall_Stats_2017'>WAS - John Wall</option><option value='Giannis_Antetokounmpo_Stats_2017'>MIN - Giannis Antetokounmpo</option><option value='Anthony_Davis_Stats_2017'>NOP - Anthony Davis</option><option value='Kevin_Durant_Stats_2017'>GSW - Kevin Durant</option><option value='DeMar_DeRozan_Stats_2017'>TOR - DeMar DeRozan</option>");
         } else if (val == "2016") {
-            $(player).html("<option value='Stephen_Curry_Stats_2016'>GSW - Stephen Curry</option><option value='Kawhi_Leonard_Stats_2016'>Kawhi Leonard</option><option value='LeBron_James_Stats_2016'>LeBron James</option><option value='Russell_Westbrook_Stats_2016'>Russell Westbrook</option><option value='Kevin_Durant_Stats_2016'>Kevin Durant</option><option value='Chris_Paul_Stats_2016'>Chris Paul</option><option value='Draymond_Green_Stats_2016'>Draymond Green</option><option value='Damian_Lillard_Stats_2016'>Damian Lillard</option><option value='James_Harden_Stats_2016'>James Harden</option><option value='Kyle_Lowry_Stats_2016'>Kyle Lowry</option>");
+            $(player).html("<option value='Stephen_Curry_Stats_2016'>GSW - Stephen Curry</option><option value='Kawhi_Leonard_Stats_2016'>SAS - Kawhi Leonard</option><option value='LeBron_James_Stats_2016'>CLE - LeBron James</option><option value='Russell_Westbrook_Stats_2016'>OKC - Russell Westbrook</option><option value='Kevin_Durant_Stats_2016'>OKC - Kevin Durant</option><option value='Chris_Paul_Stats_2016'>LAC - Chris Paul</option><option value='Draymond_Green_Stats_2016'>GSW - Draymond Green</option><option value='Damian_Lillard_Stats_2016'>POR - Damian Lillard</option><option value='James_Harden_Stats_2016'>HOU - James Harden</option><option value='Kyle_Lowry_Stats_2016'>TOR - Kyle Lowry</option>");
         } else if (val == "2015") {
-            $(player).html("<option value='Stephen_Curry_Stats_2015'>Stephen Curry</option><option value='James_Harden_Stats_2015'>James Harden</option><option value='LeBron_James_Stats_2015'>LeBron James</option><option value='Russell_Westbrook_Stats_2015'>Russell Westbrook</option><option value='Anthony_Davis_Stats_2015'>Anthony Davis</option><option value='Chris_Paul_Stats_2015'>Chris Paul</option><option value='LaMarcus_Aldridge_Stats_2015'>LaMarcus Aldridge</option><option value='Marc_Gasol_Stats_2015'>Marc Gasol</option><option value='Blake_Griffin_Stats_2015'>Blake Griffin</option><option value='Tim_Duncan_Stats_2015'>Tim Duncan</option><option value='Kawhi_Leonard_Stats_2015'>Kawhi Leonard</option><option value='Klay_Thompson_Stats_2015'>Klay Thompson</option>");
+            $(player).html("<option value='Stephen_Curry_Stats_2015'>GSW - Stephen Curry</option><option value='James_Harden_Stats_2015'>HOU - James Harden</option><option value='LeBron_James_Stats_2015'>CLE - LeBron James</option><option value='Russell_Westbrook_Stats_2015'>OKC - Russell Westbrook</option><option value='Anthony_Davis_Stats_2015'>NOP - Anthony Davis</option><option value='Chris_Paul_Stats_2015'>LAC - Chris Paul</option><option value='LaMarcus_Aldridge_Stats_2015'>POR - LaMarcus Aldridge</option><option value='Marc_Gasol_Stats_2015'>MEM - Marc Gasol</option><option value='Blake_Griffin_Stats_2015'>LAC - Blake Griffin</option><option value='Tim_Duncan_Stats_2015'>SAS - Tim Duncan</option><option value='Kawhi_Leonard_Stats_2015'>SAS - Kawhi Leonard</option><option value='Klay_Thompson_Stats_2015'>GSW - Klay Thompson</option>");
         }
     });
 	/* Copy select options from first drop down to all clones */
@@ -107,7 +107,7 @@ $(document).ready(function() {
 	$("#statAdv").on("change", drawScatterplot);
 
 	// set the dimensions and margins of the graph
-	var margin = {top: 20, right: 220, bottom: 50, left: 50},
+	var margin = {top: 20, right: 310, bottom: 50, left: 50},
 	    width = 1200 - margin.left - margin.right,
 	    height = 600 - margin.top - margin.bottom;
 
@@ -146,13 +146,13 @@ $(document).ready(function() {
 	// gridlines in x axis function
 	function make_x_gridlines() {		
 	    return d3.axisBottom(x)
-	        .ticks(10)
+	        .ticks(12)
 	}
 
 	// gridlines in y axis function
 	function make_y_gridlines() {		
 	    return d3.axisLeft(y)
-	        .ticks(10)
+	        .ticks(12)
 	}
 	$(".addPlayer").click(function (){
 		idx = parseInt($(this).attr('id')[0])
@@ -209,15 +209,6 @@ $(document).ready(function() {
 				}
 			}
 		}
-		/*
-		seasonLists.forEach(function(listId,idx){
-			//Create list of csv files that need to be loaded
-			if ($.inArray("Data Store/"+($(seasonLists[idx])[0].value)+'/'+($(playerLists[idx])[0].value)+".csv", filesToLoad) == -1)
-			{
-			  filesToLoad[idx+1]=("Data Store/"+($(seasonLists[idx])[0].value)+'/'+($(playerLists[idx])[0].value)+".csv")
-			}
-		})
-		*/
 		
 		//Create queue for loading multiple csv files
 		var queue = d3.queue();
@@ -315,17 +306,15 @@ $(document).ready(function() {
 			    .attr("transform", "translate(0," + height + ")")
 			    .attr("class", "xaxis")
 			    .transition().duration(500)
-			    .call(d3.axisBottom(x).ticks(25, "s"));
+			    .call(d3.axisBottom(x).ticks(30, "s"));
 			
-
 			svg.selectAll(".yaxis").remove()
 
 			// Add the Y Axis
 			svg.append("g")
 			  	.attr("class", "yaxis")
 			  	.transition().duration(500)
-			    .call(d3.axisLeft(y).ticks(10,"s"))
-
+			    .call(d3.axisLeft(y).ticks(12,"s").tickFormat(d3.format("")))
 
 			svg.selectAll(".axisLabel").remove()
 
@@ -381,7 +370,6 @@ $(document).ready(function() {
               .text(function(d) {
               	return d.key;
                });            
-
               				svg.selectAll(".mouse-per-line").remove()
             			    //Add mouse over effects
             			    var mouseG = svg.append("g")
@@ -463,7 +451,6 @@ $(document).ready(function() {
             									}
             					            d3.select(this).select('text')
             					            	.text(y.invert(pos.y).toFixed(2));
-
             					              
             					            return "translate(" + mouse[0] + "," + pos.y +")";
             					            
@@ -576,7 +563,7 @@ $(document).ready(function() {
 			scatterPlot.append("g")
 			  	.attr("class", "yaxis")
 			  	.transition().duration(500)
-			    .call(d3.axisLeft(y).ticks(10,"s"))
+			    .call(d3.axisLeft(y).ticks(10,"s").tickFormat(d3.format("")))
 
 			
 			scatterPlot.selectAll(".axisLabel").remove()
@@ -607,7 +594,7 @@ $(document).ready(function() {
         		.transition()
         		.duration(800)
 			    .attr("r", function(d,i) {
-			     if(d.Name == "Average MVP - Past 30 years"){
+			     if(d.Name == "Average MVP - Past 30 Years"){
 			     	return 10
 			     }else{return 8}
 			 	})
@@ -615,13 +602,13 @@ $(document).ready(function() {
 			    .attr("cy", function(d) { return y(d.y_stat); })
 
 			    .attr("fill", function(d,i) {
-			     if(d.Name == "Average MVP"){
+			     if(d.Name == "Average MVP - Past 30 Years"){
 			     	return "#FFD700"
 			     }
 			     return color(i); 
 			 	} )
 			 	.style('stroke', function(d,i) {
-			     if(d.Name == "Average MVP"){
+			     if(d.Name == "Average MVP - Past 30 Years"){
 			     	return "yellow"
 			     }} )
 
