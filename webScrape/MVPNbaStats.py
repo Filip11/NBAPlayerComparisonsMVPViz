@@ -24,17 +24,18 @@ def main():
 	#Player season data to be retrieved
 	playersToStudy=[['LeBron James','2018'],['James Harden','2018'],['Giannis Antetokounmpo','2018'],['Kevin Durant','2018'],['Kyrie Irving','2018'],['Stephen Curry','2018'],['Russell Westbrook','2018'],['DeMar DeRozan','2018'],['Anthony Davis','2018'],
 	['Kyle Lowry','2018'],['Karl-Anthony Towns','2018'],['Nikola Jokic','2018'],['Paul George','2018'],['Gary Harris','2018'],['Klay Thompson','2018'],['Draymond Green','2018'],['Chris Paul','2018'],['Brandon Ingram','2018'],['DeMarcus Cousins','2018'],['Victor Oladipo','2018'],
-	['Lou Williams','2018'],['Blake Griffin','2018'],['Jimmy Butler','2018'],['Kristaps Porzingis','2018'],['Joel Embiid','2018'],['Ben Simmons','2018'],['Devin Booker','2018'],['Damian Lillard','2018'],['Donovan Mitchell','2018'],['Bradley Beal','2018'],
-	['Russell Westbrook','2017'],['James Harden','2017'],['Kawhi Leonard','2017'],['LeBron James','2017'],['Isaiah Thomas','2017'],['Stephen Curry','2017'],
-	['John Wall','2017'],['Giannis Antetokounmpo','2017'],['Anthony Davis','2017'],['Kevin Durant','2017'],['DeMar DeRozan','2017'],["Kyrie Irving","2017"],["Klay Thompson","2017"],["Draymond Green","2017"],["Nikola Jokic","2017"],["Jimmy Butler","2017"],["DeMarcus Cousins","2017"],["Chris Paul","2017"],
-	['Stephen Curry','2016'],['Kawhi Leonard','2016'],
-	['LeBron James','2016'],['Russell Westbrook','2016'],['Kevin Durant','2016'],['Chris Paul','2016'],['Draymond Green','2016'],['Damian Lillard','2016'],['James Harden','2016'],
-	['Kyle Lowry','2016'],['Stephen Curry','2015'],['James Harden','2015'],['LeBron James','2015'],['Russell Westbrook','2015'],['Anthony Davis','2015'],['Chris Paul','2015'],
-	['LaMarcus Aldridge','2015'],['Marc Gasol','2015'],['Blake Griffin','2015'],['Tim Duncan','2015'],['Kawhi Leonard','2015'],['Klay Thompson','2015']]
+	['Lou Williams','2018'],['Blake Griffin','2018'],['Jimmy Butler','2018'],['Kristaps Porzingis','2018'],['Joel Embiid','2018'],['Ben Simmons','2018'],['Devin Booker','2018'],['Damian Lillard','2018'],['Donovan Mitchell','2018'],['Bradley Beal','2018'],["Bogdan Bogdanovic","2018"],
+	['Russell Westbrook','2017'],['James Harden','2017'],['Kawhi Leonard','2017'],['LeBron James','2017'],['Isaiah Thomas','2017'],['Stephen Curry','2017'],["Paul George","2017"],['Damian Lillard',"2017"],
+	['John Wall','2017'],['Giannis Antetokounmpo','2017'],['Anthony Davis','2017'],['Kevin Durant','2017'],['DeMar DeRozan','2017'],["Kyrie Irving","2017"],["Klay Thompson","2017"],["Draymond Green","2017"],["Nikola Jokic","2017"],["Jimmy Butler","2017"],["DeMarcus Cousins","2017"],["Chris Paul","2017"],["Kyle Lowry","2017"],
+	['Stephen Curry','2016'],['Kawhi Leonard','2016'],["DeMar DeRozan","2016"],["Anthony Davis","2016"],
+	['LeBron James','2016'],['Russell Westbrook','2016'],['Kevin Durant','2016'],['Chris Paul','2016'],['Draymond Green','2016'],['Damian Lillard','2016'],['James Harden','2016'],["Kyrie Irving","2016"],["Paul George","2016"],["DeAndre Jordan","2016"],["Klay Thompson","2016"],
+	['Kyle Lowry','2016'],
+	['Stephen Curry','2015'],['James Harden','2015'],['LeBron James','2015'],['Russell Westbrook','2015'],['Anthony Davis','2015'],['Chris Paul','2015'],
+	['LaMarcus Aldridge','2015'],['Marc Gasol','2015'],['Blake Griffin','2015'],['Tim Duncan','2015'],['Kawhi Leonard','2015'],['Klay Thompson','2015'],["Kevin Durant","2015"],["Jimmy Butler","2015"],["Carmelo Anthony","2015"]]
 	
 	latestPlayersOnly = [['LeBron James','2018'],['James Harden','2018'],['Giannis Antetokounmpo','2018'],['Kevin Durant','2018'],['Kyrie Irving','2018'],['Stephen Curry','2018'],['Russell Westbrook','2018'],['DeMar DeRozan','2018'],['Anthony Davis','2018'],
 	['Kyle Lowry','2018'],['Karl-Anthony Towns','2018'],['Nikola Jokic','2018'],['Paul George','2018'],['Gary Harris','2018'],['Klay Thompson','2018'],['Draymond Green','2018'],['Chris Paul','2018'],['Brandon Ingram','2018'],['DeMarcus Cousins','2018'],['Victor Oladipo','2018'],
-	['Lou Williams','2018'],['Blake Griffin','2018'],['Jimmy Butler','2018'],['Kristaps Porzingis','2018'],['Joel Embiid','2018'],['Ben Simmons','2018'],['Devin Booker','2018'],['Damian Lillard','2018'],['Donovan Mitchell','2018'],['Bradley Beal','2018']]
+	['Lou Williams','2018'],['Blake Griffin','2018'],['Jimmy Butler','2018'],['Kristaps Porzingis','2018'],['Joel Embiid','2018'],['Ben Simmons','2018'],['Devin Booker','2018'],['Damian Lillard','2018'],['Donovan Mitchell','2018'],['Bradley Beal','2018'],["Bogdan Bogdanovic","2018"]]
 	for playerSeason in playersToStudy:
 		player=playerSeason[0]
 		season=playerSeason[1]
