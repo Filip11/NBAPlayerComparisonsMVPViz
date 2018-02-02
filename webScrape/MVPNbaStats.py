@@ -36,7 +36,7 @@ def main():
 	latestPlayersOnly = [['LeBron James','2018'],['James Harden','2018'],['Giannis Antetokounmpo','2018'],['Kevin Durant','2018'],['Kyrie Irving','2018'],['Stephen Curry','2018'],['Russell Westbrook','2018'],['DeMar DeRozan','2018'],['Anthony Davis','2018'],
 	['Kyle Lowry','2018'],['Karl-Anthony Towns','2018'],['Nikola Jokic','2018'],['Paul George','2018'],['Gary Harris','2018'],['Klay Thompson','2018'],['Draymond Green','2018'],['Chris Paul','2018'],['Brandon Ingram','2018'],['DeMarcus Cousins','2018'],['Victor Oladipo','2018'],
 	['Lou Williams','2018'],['Blake Griffin','2018'],['Jimmy Butler','2018'],['Kristaps Porzingis','2018'],['Joel Embiid','2018'],['Ben Simmons','2018'],['Devin Booker','2018'],['Damian Lillard','2018'],['Donovan Mitchell','2018'],['Bradley Beal','2018'],["Bogdan Bogdanovic","2018"]]
-	for playerSeason in playersToStudy:
+	for playerSeason in latestPlayersOnly:
 		player=playerSeason[0]
 		season=playerSeason[1]
 		#Get player stats per game
