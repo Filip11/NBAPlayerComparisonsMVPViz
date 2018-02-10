@@ -62,10 +62,11 @@ def averageMVPProcess():
 #Populate the single stats lists for each season with column headers
 def singleStatsSetup():
 	seasonList=["2015","2016","2017","2018"]
+	latestSeasonList = ["2018"]
 	#get single game stats
 	singleStatFolder = (os.path.abspath(os.path.join(os.getcwd(), os.pardir)))
 	singleStatFolder = os.path.join(singleStatFolder,'Data Store/SingleStats/')
-	for season in seasonList:
+	for season in latestSeasonList:
 		with open(singleStatFolder+"/"+season+"/AdvStatPoints.csv",'wb') as statFile:
 			writer = csv.writer(statFile)
 			writer.writerow(['Name',"PER","OWS","DWS","WS","WS/48","OBPM","DBPM","BPM","VORP"]) 
