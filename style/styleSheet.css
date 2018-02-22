@@ -1,0 +1,118 @@
+
+.title {
+	margin-left:100px;
+	margin-right:145px;
+	display: flex;
+	justify-content: space-between;
+}
+.subtitle{
+	margin-left:0px;
+	margin-right:160px;
+	display: flex;
+	justify-content: space-between;
+}
+.headerIcon{
+	float: left;
+	padding-top: 4px;
+}
+hr {
+	height: 3px;
+	border: 0;
+	box-shadow: 0 6px 6px -6px #8c8b8b inset;
+}
+.line {
+  fill: none;
+  stroke: steelblue;
+  stroke-width: 1.5px;
+}
+.grid line {
+  stroke: lightgrey;
+  stroke-opacity: 0.7;
+  shape-rendering: crispEdges;
+}
+.controls {
+	margin-left: 60px;
+	display:flex;
+	align-items:center;
+	position: relative;
+	font-family:"Lucida Bright";
+	
+}
+.firstAdd{
+	padding-top: 23px;
+}
+.selectWidth{
+	width: auto;
+}
+div.tooltip {	
+    position: absolute;			
+    text-align: center;			
+    padding: 2px;				
+    font: 12px sans-serif;		
+    /*background: lightsteelblue;	*/
+    border: 0px;		
+    border-radius: 8px;			
+    pointer-events: none;			
+}
+form{
+	padding-top:5px;
+}
+.legend{
+	shape-rendering:crispEdges
+}
+.statSelect{
+	padding-left:90px;
+}
+.statSelectAdv{
+	padding-left: 620px;
+}
+.About{
+	margin-left: 75px;
+	padding-bottom: 5px;
+	display: flex;
+	justify-content: space-between;
+}
+.addPlayer{
+	visibility: visible;
+	float: right;
+}
+a:hover {
+		cursor:pointer;
+}
+a{
+	padding-right: 10px;
+	display: inline-block;
+}
+h2{
+	margin-left:60px;
+	font-family:"Flama-Bold";
+	font-size: 30px;
+}
+label { display: block; }
+select[disabled] { background-color: LightGray; }
+
+.tabs {
+    width:100%;
+    display:inline-block;
+}
+
+.tab-content {
+    padding:15px;
+    border-radius:3px;
+    box-shadow:-1px 1px 1px rgba(0,0,0,0.15);
+    background:#fff;
+}
+
+.tab {
+    display:none;
+}
+
+.tab.active {
+    display:block;
+    background:#fff;
+}
+.nav-tabs{
+	margin-left: 60px;
+	font-size:16px;
+
+}
